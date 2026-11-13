@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopkart | Storefront</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { background-color: #060b18; color: #f8fafc; font-family: 'Inter', sans-serif; }
+    .custom-card { background-color: #0c1427; border: 1px solid #1a2949; }
+    .aspect-fashion { aspect-ratio: 3 / 4; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col pb-14 select-none">
+  <header class="custom-card sticky top-0 z-30 border-b border-[#1a2949] p-3 flex justify-between items-center bg-[#0c1427]">
+    <h1 id="cust-header-store-name" class="font-bold text-base text-white">Fashion Store</h1>
+    <span class="text-xs text-emerald-400 font-semibold">✔ Assured Store</span>
+  </header>
+  <main class="max-w-6xl mx-auto p-4 flex-1 w-full space-y-4">
+    <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+  </main>
+  <script>
+    const SUPABASE_URL = "https://rcofrtcyhjgdsiotkkjq.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_6uFSLPyZ6w-VXAhkXgL5uA_cvFJO73C";
+    const client = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    async function initStore() {
+      const slug = new URLSearchParams(window.location.search).get("store");
+      if (!slug) {
+        document.getElementById("productGrid").innerHTML = `<div class="col-span-full text-center text-rose-400 py-10">Store link invalid hai! Sahi link use karein.</div>`;
+        return;
+      }
+
+      const { data: sList } = await client.from("shopkart_stores").select("*").eq("store_slug", slug).limit(1);
+      if (sList && sList.length > 0) {
+        const store = sList[0];
+        document.getElementById("cust-header-store-name").innerText = store.store_name;
+        
+        const { data: pList } = await client.from("shopkart_products").select("*").eq("store_id", store.id);
+        const products = pList || [];
+
+        if (!products.length) {
+          document.getElementById("productGrid").innerHTML = `<div class="col-span-full text-center text-slate-400 py-10">Is dukaan par abhi koi product nahi hai.</div>`;
+          return;
+        }
+
+        document.getElementById("productGrid").innerHTML = products.map(p => `
+          <div class="custom-card rounded-2xl p-3 flex flex-col justify-between">
+            <img src="${p.image_url}" class="aspect-fashion object-cover rounded-xl mb-2 bg-slate-900">
+            <h4 class="font-bold text-xs text-white line-clamp-1">${p.name}</h4>
+            <div class="text-xs font-bold text-emerald-400 my-1">₹${p.selling_price} <span class="text-slate-500 line-through text-[10px]">₹${p.mrp}</span></div>
+            <button onclick="window.open('https://wa.me/${store.whatsapp_number}?text=Order%20${encodeURIComponent(p.name)}%20Price%20₹${p.selling_price}')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-xl text-xs font-bold transition">Order on WhatsApp 💬</button>
+          </div>
+        `).join("");
+      } else {
+        document.getElementById("productGrid").innerHTML = `<div class="col-span-full text-center text-rose-400 py-10">Store nahi mila ya link galat hai.</div>`;
+      }
+    }
+    window.onload = initStore;
+  </script>
+</body>
+</html>

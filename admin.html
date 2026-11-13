@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shopkart | Master Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-white p-6">
+  <div id="admin-login" class="max-w-sm mx-auto space-y-3 mt-20 bg-slate-900 p-6 rounded-2xl border border-slate-800">
+    <h2 class="text-xl font-bold text-amber-400">Super Admin Login</h2>
+    <input type="email" id="a-email" placeholder="Admin Email" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 text-sm outline-none">
+    <input type="password" id="a-pass" placeholder="Password" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 text-sm outline-none">
+    <button onclick="login()" class="w-full bg-amber-600 hover:bg-amber-500 font-bold py-2.5 rounded text-sm transition">Login</button>
+  </div>
+
+  <div id="admin-panel" class="hidden max-w-5xl mx-auto space-y-4">
+    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+      <h2 class="text-xl font-bold">👑 All Registered Stores</h2>
+      <button onclick="location.reload()" class="px-3 py-1 bg-slate-800 rounded text-xs">Lock Admin</button>
+    </div>
+    <div id="store-list" class="space-y-2"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://rcofrtcyhjgdsiotkkjq.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_6uFSLPyZ6w-VXAhkXgL5uA_cvFJO73C";
+    const client = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    async function login() {
+      if(document.getElementById("a-email").value === "mtkahamad1@gmail.com" && document.getElementById("a-pass").value === "@MUSTAKAHAMAD9332") {
+        document.getElementById("admin-login").classList.add("hidden");
+        document.getElementById("admin-panel").classList.remove("hidden");
+        const { data } = await client.from("shopkart_stores").select("*");
+        
+        const baseDir = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        
+        document.getElementById("store-list").innerHTML = (data || []).map(s => `
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+            <div>
+              <b class="text-sm text-white">${s.store_name}</b> 
+              <span class="text-slate-400">(${s.owner_email} • WA: +${s.whatsapp_number})</span>
+            </div>
+            <a href="${baseDir}store.html?store=${s.store_slug}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 font-bold text-white rounded-lg">Open Storefront ↗</a>
+          </div>
+        `).join("");
+      } else { 
+        alert("Galat Admin credentials!"); 
+      }
+    }
+  </script>
+</body>
+</html>
