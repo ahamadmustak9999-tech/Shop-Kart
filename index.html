@@ -24,6 +24,11 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .aspect-fashion { aspect-ratio: 3 / 4; }
+    @keyframes zoomInModal {
+      0% { opacity: 0; transform: scale(0.92); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .product-zoom-anim { animation: zoomInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-[#0b0f17] dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-200">
@@ -47,12 +52,10 @@
             <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-emerald-700 dark:bg-amber-500 text-white dark:text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
           </button>
 
-          <!-- Dukandar Login / Dashboard Button -->
           <button id="dukandarNavBtn" onclick="openSellerModal()" class="text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg bg-gray-900 text-white dark:bg-amber-500 dark:text-gray-950 hover:opacity-90 transition">
             <span id="sellerBtnText">Dukandar Login</span>
           </button>
 
-          <!-- Super Admin Secret Icon -->
           <button onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white" title="Super Admin">
             ⚙️
           </button>
@@ -65,7 +68,6 @@
         <button class="px-4 py-2 bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-semibold text-sm">🔍</button>
       </div>
 
-      <!-- Fashion Category Pills -->
       <div id="categoryBar" class="mt-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
     </div>
   </header>
@@ -79,7 +81,6 @@
 
   <!-- MAIN CUSTOMER STOREFRONT -->
   <main id="storefrontMain" class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4">
-    <!-- Store Switcher -->
     <div id="storeDirectoryBar" class="mb-4 hidden items-center justify-between flex-wrap gap-2 bg-emerald-950/5 dark:bg-gray-800/60 p-3 rounded-xl border border-emerald-900/10 dark:border-gray-700">
       <div class="flex items-center gap-2 flex-wrap">
         <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-amber-400">Active Store:</span>
@@ -110,11 +111,65 @@
 
     <div class="flex items-center justify-between mb-3">
       <h2 class="text-base sm:text-lg font-bold">Fashion Catalogue (<span id="productCountLabel">0</span> Items)</h2>
-      <span class="text-xs text-gray-500 dark:text-gray-400">Tap size before ordering</span>
+      <span class="text-xs text-gray-500 dark:text-gray-400">Tap product to view details</span>
     </div>
 
     <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5"></div>
   </main>
+
+  <!-- FLIPKART-STYLE EXPANDED PRODUCT DETAIL MODAL -->
+  <div id="productDetailModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-gray-900 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800 product-zoom-anim my-auto">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded bg-indigo-600/20 text-indigo-400" id="zoomProdCategory">CATEGORY</span>
+          <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">✔ Shopkart Assured</span>
+        </div>
+        <button onclick="closeProductDetailModal()" class="h-8 w-8 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-red-500 font-bold text-base">✕</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 sm:p-6 max-h-[82vh] overflow-y-auto">
+        <div class="relative aspect-fashion rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <img id="zoomProdImage" src="" alt="Product" class="w-full h-full object-cover" />
+          <span id="zoomProdRating" class="absolute bottom-3 left-3 bg-[#388e3c] text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-lg">4.3 ★</span>
+        </div>
+
+        <div class="flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="text-xs font-semibold text-indigo-500 dark:text-indigo-400" id="zoomProdStoreName">Sold by: Fashion Store</div>
+            <h2 id="zoomProdTitle" class="text-lg sm:text-2xl font-extrabold leading-snug">Product Title</h2>
+
+            <div class="p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 space-y-1">
+              <div class="text-[11px] font-bold text-[#388e3c] dark:text-emerald-400">Special Festival Price</div>
+              <div class="flex items-baseline gap-2.5 flex-wrap">
+                <span id="zoomProdPrice" class="text-2xl sm:text-3xl font-extrabold">₹499</span>
+                <span id="zoomProdMrp" class="text-sm text-gray-400 line-through">₹1299</span>
+                <span id="zoomProdDiscount" class="text-sm font-extrabold text-[#388e3c] dark:text-emerald-400">61% off</span>
+              </div>
+              <p class="text-[11px] text-gray-500">Inclusive of all taxes • Direct WhatsApp Checkout</p>
+            </div>
+
+            <div class="space-y-2 pt-1">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Select Size:</span>
+                <span class="text-[11px] text-indigo-500 dark:text-indigo-400 font-semibold">Size Chart Assured</span>
+              </div>
+              <div id="zoomProdSizes" class="flex items-center gap-2 flex-wrap"></div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-gray-200 dark:border-gray-800 flex gap-2.5">
+            <button id="zoomAddToBagBtn" class="flex-1 py-3 px-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
+              <span>🛒 Add to Bag</span>
+            </button>
+            <button id="zoomWhatsappOrderBtn" class="flex-[1.4] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg transition">
+              <span>Order on WhatsApp</span> 💬
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- SELLER PANEL MODAL -->
   <div id="sellerModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
@@ -271,6 +326,7 @@
     let selectedSizes = {};
     let cart = [];
     let loggedInSeller = null;
+    let activeZoomProductId = null;
 
     function escapeHtml(v) { return String(v ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -352,7 +408,7 @@
       const cats = ["All", ...(currentStore.categories || ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"])];
       document.getElementById("categoryBar").innerHTML = cats.map(c => {
         const active = c === activeCategory;
-        return `<button onclick="selectCategory('${c.replace(/'/g, "\\\\'")}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+        return `<button onclick="selectCategory('${c.replace(/'/g, "\\'")}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
           active ? 'bg-emerald-800 text-white dark:bg-amber-500 dark:text-gray-950 shadow-sm' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
         }">${c}</button>`;
       }).join("");
@@ -386,22 +442,25 @@
 
         return `
         <div class="bg-white dark:bg-[#151c28] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
-          <div class="relative aspect-fashion bg-gray-100 dark:bg-gray-800 overflow-hidden">
-            <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition duration-300" />
+          <!-- Clickable image to open Flipkart-style zoom view -->
+          <div onclick="openProductDetailModal('${p.id}')" class="relative aspect-fashion bg-gray-100 dark:bg-gray-800 overflow-hidden cursor-pointer group">
+            <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+            <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur">🔍 View</span>
             <span class="absolute bottom-2 left-2 bg-emerald-700 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow">${p.rating || '4.3'} ★</span>
             <span class="absolute bottom-2 right-2 bg-white/95 text-blue-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">✔ Assured</span>
           </div>
+
           <div class="p-3 flex-1 flex flex-col justify-between">
             <div>
               <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400">${escapeHtml(p.category)}</div>
-              <h3 class="font-semibold text-xs sm:text-sm line-clamp-1 mt-0.5">${escapeHtml(p.name)}</h3>
+              <h3 onclick="openProductDetailModal('${p.id}')" class="font-semibold text-xs sm:text-sm line-clamp-1 mt-0.5 cursor-pointer hover:text-indigo-400 transition">${escapeHtml(p.name)}</h3>
               <div class="mt-2 flex items-center gap-1 flex-wrap">
                 ${sizes.map(sz => {
                   const isSel = selectedSizes[p.id] === sz;
                   return `<button onclick="chooseSize('${p.id}', '${escapeHtml(sz)}')" class="text-[10px] font-bold px-2 py-0.5 rounded border transition ${isSel ? 'bg-gray-900 text-white dark:bg-amber-400 dark:text-black' : 'border-gray-300 dark:border-gray-700'}">${escapeHtml(sz)}</button>`;
                 }).join("")}
               </div>
-              <div class="mt-2.5 flex items-baseline gap-1.5 flex-wrap">
+              <div onclick="openProductDetailModal('${p.id}')" class="mt-2.5 flex items-baseline gap-1.5 flex-wrap cursor-pointer">
                 <span class="font-extrabold text-sm sm:text-base">₹${p.selling_price}</span>
                 <span class="text-xs text-gray-400 line-through">₹${p.mrp}</span>
                 <span class="text-xs font-bold text-[#388e3c]">${discount}% off</span>
@@ -416,7 +475,95 @@
       }).join("");
     }
 
-    function chooseSize(productId, size) { selectedSizes[productId] = size; renderCustomerProducts(); }
+    function chooseSize(productId, size) {
+      selectedSizes[productId] = size;
+      renderCustomerProducts();
+      if (activeZoomProductId === productId) renderZoomModalSizes(productId);
+    }
+
+    // FLIPKART-STYLE EXPANDED PRODUCT DETAIL MODAL
+    function openProductDetailModal(productId) {
+      const p = products.find(x => String(x.id) === String(productId));
+      if (!p || !currentStore) return;
+
+      activeZoomProductId = p.id;
+      const sell = Number(p.selling_price || 0);
+      const mrp = Number(p.mrp || sell);
+      const discount = mrp > sell ? Math.round(((mrp - sell) / mrp) * 100) : 0;
+      const sizes = Array.isArray(p.sizes) && p.sizes.length ? p.sizes : ["Free Size"];
+      if (!selectedSizes[p.id]) selectedSizes[p.id] = sizes[0];
+
+      // Build modal HTML dynamically
+      let modalEl = document.getElementById("flipkartZoomModal");
+      if (!modalEl) {
+        modalEl = document.createElement("div");
+        modalEl.id = "flipkartZoomModal";
+        modalEl.className = "fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto";
+        document.body.appendChild(modalEl);
+      }
+
+      modalEl.innerHTML = `
+        <div class="bg-white dark:bg-gray-900 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800 product-zoom-anim my-auto">
+          <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded bg-indigo-600/20 text-indigo-400">${escapeHtml(p.category)}</span>
+              <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">✔ Shopkart Assured</span>
+            </div>
+            <button onclick="closeProductDetailModal()" class="h-8 w-8 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-red-500 font-bold text-base">✕</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 sm:p-6 max-h-[82vh] overflow-y-auto">
+            <div class="relative aspect-fashion rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <img src="${escapeHtml(p.image_url)}" class="w-full h-full object-cover" />
+              <span class="absolute bottom-3 left-3 bg-[#388e3c] text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-lg">${p.rating || '4.3'} ★</span>
+            </div>
+            <div class="flex flex-col justify-between space-y-4">
+              <div class="space-y-3">
+                <div class="text-xs font-semibold text-indigo-500 dark:text-indigo-400">Sold by: ${escapeHtml(currentStore.store_name)}</div>
+                <h2 class="text-lg sm:text-2xl font-extrabold leading-snug">${escapeHtml(p.name)}</h2>
+                <div class="p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 space-y-1">
+                  <div class="text-[11px] font-bold text-[#388e3c] dark:text-emerald-400">Special Festival Price</div>
+                  <div class="flex items-baseline gap-2.5 flex-wrap">
+                    <span class="text-2xl sm:text-3xl font-extrabold">₹${sell}</span>
+                    <span class="text-sm text-gray-400 line-through">₹${mrp}</span>
+                    <span class="text-sm font-extrabold text-[#388e3c] dark:text-emerald-400">${discount}% off</span>
+                  </div>
+                </div>
+                <div class="space-y-2 pt-1">
+                  <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Select Size:</span>
+                  <div id="zoomProdSizes" class="flex items-center gap-2 flex-wrap"></div>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-gray-200 dark:border-gray-800 flex gap-2.5">
+                <button onclick="addToCart('${p.id}'); closeProductDetailModal(); openCartModal();" class="flex-1 py-3 px-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition"><span>🛒 Add to Bag</span></button>
+                <button onclick="directWhatsappOrder('${p.id}')" class="flex-[1.4] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg transition"><span>Order on WhatsApp</span> 💬</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      renderZoomModalSizes(p.id);
+      modalEl.classList.remove("hidden");
+    }
+
+    function renderZoomModalSizes(productId) {
+      const p = products.find(x => String(x.id) === String(productId));
+      if (!p) return;
+      const sizes = p.sizes && p.sizes.length ? p.sizes : ["Free Size"];
+      const currentSz = selectedSizes[p.id] || sizes[0];
+      const box = document.getElementById("zoomProdSizes");
+      if (!box) return;
+      box.innerHTML = sizes.map(sz => {
+        const isSel = currentSz === sz;
+        return `<button onclick="chooseSize('${p.id}', '${escapeHtml(sz)}')" class="px-4 py-2 rounded-xl text-xs font-extrabold border-2 transition ${isSel ? 'bg-indigo-600 text-white border-indigo-400 shadow-md scale-105' : 'border-gray-300 dark:border-gray-700'}">${escapeHtml(sz)}</button>`;
+      }).join("");
+    }
+
+    function closeProductDetailModal() {
+      const modalEl = document.getElementById("flipkartZoomModal");
+      if (modalEl) modalEl.classList.add("hidden");
+      activeZoomProductId = null;
+    }
+
     function cleanWhatsappNumber(num) { let c = String(num||"").replace(/\D/g,""); return c.length === 10 ? "91" + c : c; }
 
     function directWhatsappOrder(productId) {
