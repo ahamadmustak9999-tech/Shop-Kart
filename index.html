@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopkart | Fashion Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .aspect-fashion { aspect-ratio: 3 / 4; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-[#0b0f17] dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#111827]/95 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
+          <span class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Shopkart</span>
+          <span id="navStoreBadge" class="hidden sm:inline-block text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-900/10 text-emerald-800 dark:bg-amber-500/20 dark:text-amber-300 border border-emerald-800/20 dark:border-amber-400/30"></span>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button onclick="toggleTheme()" class="p-2 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Toggle Dark/Light Mode">
+            <span id="themeIcon" class="text-base">🌙</span>
+          </button>
+
+          <button onclick="openCartModal()" class="relative p-2 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+            🛒
+            <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-emerald-700 dark:bg-amber-500 text-white dark:text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </button>
+
+          <!-- Dukandar Login / Dashboard Button -->
+          <button id="dukandarNavBtn" onclick="openSellerModal()" class="text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg bg-gray-900 text-white dark:bg-amber-500 dark:text-gray-950 hover:opacity-90 transition">
+            <span id="sellerBtnText">Dukandar Login</span>
+          </button>
+
+          <!-- Super Admin Secret Icon -->
+          <button onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white" title="Super Admin">
+            ⚙️
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="mt-2.5 flex items-center bg-gray-100 dark:bg-gray-800/90 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <input id="searchInput" oninput="renderCustomerProducts()" type="text" placeholder="Search for kurtis, jeans, shirts, footwear..." class="w-full px-3.5 py-2 bg-transparent text-sm focus:outline-none" />
+        <button class="px-4 py-2 bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-semibold text-sm">🔍</button>
+      </div>
+
+      <!-- Fashion Category Pills -->
+      <div id="categoryBar" class="mt-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+    </div>
+  </header>
+
+  <!-- STORE EXPIRED / LOCKED BANNER -->
+  <div id="expiredScreen" class="hidden max-w-xl mx-auto my-16 p-8 bg-white dark:bg-gray-900 rounded-2xl border border-red-300 dark:border-red-800 text-center shadow-lg">
+    <div class="text-5xl mb-3">🔒</div>
+    <h2 class="text-2xl font-bold text-red-600 dark:text-red-400">Store Subscription Expired</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Is dukaan ka Shopkart subscription plan khatam ho chuka hai ya Admin dwara pause kiya gaya hai.</p>
+  </div>
+
+  <!-- MAIN CUSTOMER STOREFRONT -->
+  <main id="storefrontMain" class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4">
+    <!-- Store Switcher -->
+    <div id="storeDirectoryBar" class="mb-4 hidden items-center justify-between flex-wrap gap-2 bg-emerald-950/5 dark:bg-gray-800/60 p-3 rounded-xl border border-emerald-900/10 dark:border-gray-700">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-amber-400">Active Store:</span>
+        <select id="storeSelector" onchange="switchStore(this.value)" class="text-xs sm:text-sm font-semibold bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5"></select>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="storeAddressDisplay" class="text-xs text-gray-600 dark:text-gray-400"></span>
+        <button onclick="copyStoreLink()" class="text-xs font-semibold px-2.5 py-1 rounded bg-emerald-800/10 text-emerald-800 dark:bg-amber-500/20 dark:text-amber-300 hover:opacity-80">
+          🔗 Copy Store Link
+        </button>
+      </div>
+    </div>
+
+    <!-- Custom Store Hero Banner -->
+    <div class="relative rounded-2xl overflow-hidden mb-6 bg-gradient-to-r from-[#2c221e] via-[#43362e] to-[#2c221e] text-white shadow-md">
+      <div class="px-6 py-8 sm:py-12 md:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <span id="heroStoreName" class="inline-block text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded bg-amber-400 text-gray-950 mb-2">SHOPKART VERIFIED PARTNER</span>
+          <h1 id="heroBannerTitle" class="text-xl sm:text-3xl font-extrabold tracking-tight">FESTIVE COLLECTION UP TO 50% OFF</h1>
+          <p id="heroBannerSubtitle" class="text-xs sm:text-sm text-gray-200 mt-1">Select your size & order directly on Seller's WhatsApp</p>
+        </div>
+        <div class="text-xs bg-black/40 backdrop-blur px-3.5 py-2 rounded-xl border border-white/15">
+          <div>💬 WhatsApp Order Desk:</div>
+          <div id="heroWhatsappDisplay" class="font-bold text-amber-300 text-sm mt-0.5">+91 9876543210</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-base sm:text-lg font-bold">Fashion Catalogue (<span id="productCountLabel">0</span> Items)</h2>
+      <span class="text-xs text-gray-500 dark:text-gray-400">Tap size before ordering</span>
+    </div>
+
+    <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5"></div>
+  </main>
+
+  <!-- SELLER PANEL MODAL -->
+  <div id="sellerModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white dark:bg-gray-900 w-full max-w-4xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden my-8">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+        <h3 class="font-bold text-lg">🛍️ Shopkart Dukandar Panel</h3>
+        <button onclick="closeSellerModal()" class="text-gray-500 hover:text-red-500 text-xl font-bold">&times;</button>
+      </div>
+
+      <div id="sellerAuthView" class="p-5 sm:p-6 grid md:grid-cols-2 gap-6">
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+          <h4 class="font-bold text-base mb-3">Existing Dukandar Login</h4>
+          <div class="space-y-3">
+            <input id="loginEmail" type="email" placeholder="Gmail Address *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            <input id="loginPass" type="password" placeholder="Password *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            <button onclick="sellerLogin()" class="w-full py-2.5 rounded-lg bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-bold text-sm">Login to My Store</button>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+          <h4 class="font-bold text-base mb-3">Register Store (7 Days Free Trial)</h4>
+          <div class="space-y-2.5">
+            <input id="regStoreName" type="text" required placeholder="1. Shop Name (Mandatory) *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            <input id="regWhatsapp" type="tel" maxlength="10" required placeholder="2. WhatsApp Number (10 Digits) *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            <input id="regEmail" type="email" required placeholder="3. Seller Gmail (Mandatory) *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            <input id="regPass" type="password" required placeholder="Create Password (Mandatory) *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            <button onclick="sellerRegister()" class="w-full py-2.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-sm">Create My Store Link</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="sellerDashboardView" class="hidden p-5 max-h-[82vh] overflow-y-auto space-y-6">
+        <div class="p-4 rounded-xl bg-emerald-900/10 dark:bg-amber-500/10 border border-emerald-800/20 dark:border-amber-500/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div>
+            <div class="text-xs font-bold uppercase text-emerald-800 dark:text-amber-400">Your Personal Customer Store Link:</div>
+            <div id="sellerShareLink" class="text-xs sm:text-sm font-mono font-semibold break-all mt-0.5"></div>
+            <div id="sellerSubInfo" class="text-xs text-gray-600 dark:text-gray-400 mt-1"></div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="copyMySellerLink()" class="px-3 py-1.5 rounded-lg bg-emerald-800 text-white text-xs font-bold">Copy Link</button>
+            <button onclick="sellerLogout()" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold">Logout</button>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+          <h4 class="font-bold text-sm sm:text-base mb-3 text-emerald-800 dark:text-amber-400">⚙️ Store & Custom WhatsApp Number Settings</h4>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold block mb-1">Shop Name</label>
+              <input id="setStoreName" type="text" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold block mb-1 text-emerald-700 dark:text-amber-400">Order Receiving WhatsApp Number (With 91)</label>
+              <input id="setWhatsapp" type="text" placeholder="919876543210" class="w-full px-3 py-2 rounded-lg border-2 border-emerald-600 dark:border-amber-500 bg-transparent text-sm font-bold" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold block mb-1">Offer Banner Heading</label>
+              <input id="setBannerTitle" type="text" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold block mb-1">Shop Address / City</label>
+              <input id="setAddress" type="text" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+            </div>
+          </div>
+          <button onclick="saveStoreSettings()" class="mt-3 px-5 py-2 rounded-lg bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-bold text-xs">
+            💾 Save Settings
+          </button>
+        </div>
+
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+          <h4 class="font-bold text-sm sm:text-base text-indigo-400">🏷️ Custom Fashion Categories Manager</h4>
+          <div class="flex gap-2">
+            <input id="newCategoryInput" type="text" placeholder="Add new category..." class="flex-1 px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+            <button onclick="addCustomFashionCategory()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold">+ Add</button>
+          </div>
+          <div id="sellerCategoriesPills" class="flex flex-wrap gap-2 pt-1"></div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+          <h4 class="font-bold text-sm sm:text-base mb-3">👕 Add New Fashion Product</h4>
+          <div class="grid sm:grid-cols-3 gap-3 text-xs">
+            <input id="prodName" type="text" placeholder="Outfit Name *" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+            <select id="prodCategory" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-900 text-xs"></select>
+            <input id="prodSizes" type="text" value="S, M, L, XL" placeholder="Sizes (S, M, L, XL)" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+            <input id="prodPrice" type="number" placeholder="Selling Price (₹) *" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+            <input id="prodMrp" type="number" placeholder="Original MRP (₹) *" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+            <input id="prodImageFile" type="file" accept="image/*" class="text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-emerald-800 file:text-white" />
+          </div>
+          <button onclick="addFashionProduct()" id="uploadBtn" class="mt-3 px-5 py-2 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-xs">
+            + Upload Product
+          </button>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-sm mb-2">📦 My Uploaded Products</h4>
+          <div id="sellerProductList" class="grid sm:grid-cols-2 gap-2.5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHATSAPP CART MODAL -->
+  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b dark:border-gray-800">
+        <h3 class="font-bold text-base">🛒 Your Shopping Bag</h3>
+        <button onclick="closeCartModal()" class="text-gray-500 hover:text-red-500 text-xl font-bold">&times;</button>
+      </div>
+      <div class="p-4 space-y-3 max-h-[75vh] overflow-y-auto">
+        <div id="cartItemsContainer" class="space-y-2"></div>
+        <div class="border-t dark:border-gray-800 pt-3 flex justify-between font-bold text-base">
+          <span>Total Amount:</span>
+          <span id="cartTotalAmount">₹0</span>
+        </div>
+        <div class="space-y-2 pt-2">
+          <input id="custName" type="text" placeholder="Your Full Name *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+          <input id="custAddress" type="text" placeholder="Full Delivery Address *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+        </div>
+        <button onclick="checkoutCartOnWhatsapp()" class="w-full py-3 rounded-xl bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2">
+          <span>Order All on WhatsApp</span> 💬
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN MODAL -->
+  <div id="adminModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white dark:bg-gray-900 w-full max-w-4xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden my-8">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b dark:border-gray-800 bg-gray-900 text-white">
+        <h3 class="font-bold text-base">🛡️ Shopkart Super Admin Control</h3>
+        <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+      <div id="adminLoginGate" class="p-6 max-w-sm mx-auto space-y-3">
+        <input id="adminPinInput" type="password" placeholder="Enter Super Admin Password" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
+        <button onclick="verifyAdmin()" class="w-full py-2.5 rounded-lg bg-emerald-800 text-white font-bold text-sm">Unlock Admin Panel</button>
+      </div>
+      <div id="adminControlView" class="hidden p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+        <div id="adminStoresList" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://rcofrtcyhjgdsiotkkjq.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_6uFSLPyZ6w-VXAhkXgL5uA_cvFJO73C";
+    const SUPER_ADMIN_PIN = "admin123";
+
+    const client = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    let stores = [];
+    let products = [];
+    let currentStore = null;
+    let activeCategory = "All";
+    let selectedSizes = {};
+    let cart = [];
+    let loggedInSeller = null;
+
+    function escapeHtml(v) { return String(v ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    async function initApp() {
+      if (localStorage.getItem("shopkart_theme") === "dark") {
+        document.documentElement.classList.add("dark");
+        document.getElementById("themeIcon").innerText = "☀️";
+      }
+
+      await loadDatabase();
+
+      const params = new URLSearchParams(window.location.search);
+      const requestedSlug = params.get("store");
+
+      if (requestedSlug) {
+        const found = stores.find(s => s.store_slug === requestedSlug);
+        currentStore = found || stores[0];
+        if (found) {
+          document.getElementById("storeDirectoryBar").classList.add("hidden");
+          document.getElementById("dukandarNavBtn").classList.add("hidden");
+        }
+      } else {
+        currentStore = stores[0];
+      }
+
+      populateStoreSelector();
+      renderStorefront();
+    }
+
+    async function loadDatabase() {
+      try {
+        const { data: sData } = await client.from("shopkart_stores").select("*").order("created_at");
+        const { data: pData } = await client.from("shopkart_products").select("*").order("created_at", { ascending: false });
+        stores = sData || [];
+        products = pData || [];
+      } catch (e) {
+        stores = JSON.parse(localStorage.getItem("sk_stores")) || [];
+        products = JSON.parse(localStorage.getItem("sk_products")) || [];
+      }
+    }
+
+    function populateStoreSelector() {
+      const sel = document.getElementById("storeSelector");
+      sel.innerHTML = stores.map(s => `<option value="${s.store_slug}" ${currentStore && s.id === currentStore.id ? 'selected' : ''}>${s.store_name} (?store=${s.store_slug})</option>`).join("");
+    }
+
+    function switchStore(slug) {
+      currentStore = stores.find(s => s.store_slug === slug) || stores[0];
+      activeCategory = "All";
+      cart = [];
+      updateCartUI();
+      renderStorefront();
+    }
+
+    function isStoreValid(store) {
+      if (!store) return false;
+      const exp = new Date(store.expires_at || store.subscription_expiry || Date.now());
+      return store.status !== "SUSPENDED" && new Date() <= exp;
+    }
+
+    function renderStorefront() {
+      if (!currentStore) return;
+      document.getElementById("navStoreBadge").innerText = currentStore.store_name;
+
+      if (!isStoreValid(currentStore)) {
+        document.getElementById("storefrontMain").classList.add("hidden");
+        document.getElementById("expiredScreen").classList.remove("hidden");
+        return;
+      } else {
+        document.getElementById("storefrontMain").classList.remove("hidden");
+        document.getElementById("expiredScreen").classList.add("hidden");
+      }
+
+      document.getElementById("heroStoreName").innerText = `${currentStore.store_name} • Assured Fashion`;
+      document.getElementById("heroBannerTitle").innerText = currentStore.banner_title || "FESTIVE COLLECTION UP TO 50% OFF";
+      document.getElementById("heroWhatsappDisplay").innerText = `+${currentStore.whatsapp_number}`;
+      document.getElementById("storeAddressDisplay").innerText = currentStore.address ? `📍 ${currentStore.address}` : "";
+
+      const cats = ["All", ...(currentStore.categories || ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"])];
+      document.getElementById("categoryBar").innerHTML = cats.map(c => {
+        const active = c === activeCategory;
+        return `<button onclick="selectCategory('${c.replace(/'/g, "\\\\'")}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+          active ? 'bg-emerald-800 text-white dark:bg-amber-500 dark:text-gray-950 shadow-sm' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+        }">${c}</button>`;
+      }).join("");
+
+      renderCustomerProducts();
+    }
+
+    function selectCategory(cat) { activeCategory = cat; renderStorefront(); }
+
+    function renderCustomerProducts() {
+      const query = (document.getElementById("searchInput").value || "").toLowerCase().trim();
+      const storeProducts = products.filter(p => {
+        const belongs = String(p.store_id) === String(currentStore.id) && p.in_stock !== false;
+        const matchesCat = activeCategory === "All" || p.category === activeCategory;
+        const matchesSearch = !query || p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+        return belongs && matchesCat && matchesSearch;
+      });
+
+      document.getElementById("productCountLabel").innerText = storeProducts.length;
+      const grid = document.getElementById("productGrid");
+
+      if (!storeProducts.length) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500">Is dukaan (<span class="text-amber-400 font-bold">${currentStore.store_name}</span>) par abhi koi product upload nahi kiya gaya hai.</div>`;
+        return;
+      }
+
+      grid.innerHTML = storeProducts.map(p => {
+        const discount = Math.max(0, Math.round(((p.mrp - p.selling_price) / p.mrp) * 100));
+        const sizes = p.sizes && p.sizes.length ? p.sizes : ["Free Size"];
+        if (!selectedSizes[p.id]) selectedSizes[p.id] = sizes[0];
+
+        return `
+        <div class="bg-white dark:bg-[#151c28] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+          <div class="relative aspect-fashion bg-gray-100 dark:bg-gray-800 overflow-hidden">
+            <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition duration-300" />
+            <span class="absolute bottom-2 left-2 bg-emerald-700 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow">${p.rating || '4.3'} ★</span>
+            <span class="absolute bottom-2 right-2 bg-white/95 text-blue-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">✔ Assured</span>
+          </div>
+          <div class="p-3 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400">${escapeHtml(p.category)}</div>
+              <h3 class="font-semibold text-xs sm:text-sm line-clamp-1 mt-0.5">${escapeHtml(p.name)}</h3>
+              <div class="mt-2 flex items-center gap-1 flex-wrap">
+                ${sizes.map(sz => {
+                  const isSel = selectedSizes[p.id] === sz;
+                  return `<button onclick="chooseSize('${p.id}', '${escapeHtml(sz)}')" class="text-[10px] font-bold px-2 py-0.5 rounded border transition ${isSel ? 'bg-gray-900 text-white dark:bg-amber-400 dark:text-black' : 'border-gray-300 dark:border-gray-700'}">${escapeHtml(sz)}</button>`;
+                }).join("")}
+              </div>
+              <div class="mt-2.5 flex items-baseline gap-1.5 flex-wrap">
+                <span class="font-extrabold text-sm sm:text-base">₹${p.selling_price}</span>
+                <span class="text-xs text-gray-400 line-through">₹${p.mrp}</span>
+                <span class="text-xs font-bold text-[#388e3c]">${discount}% off</span>
+              </div>
+            </div>
+            <div class="mt-3 flex gap-1.5">
+              <button onclick="directWhatsappOrder('${p.id}')" class="flex-1 py-2 px-2 rounded-lg bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-bold text-[11px] flex items-center justify-center gap-1"><span>Order on WhatsApp</span> 💬</button>
+              <button onclick="addToCart('${p.id}')" class="px-2.5 py-2 rounded-lg border dark:border-gray-700 text-xs" title="Add to Bag">➕</button>
+            </div>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    function chooseSize(productId, size) { selectedSizes[productId] = size; renderCustomerProducts(); }
+    function cleanWhatsappNumber(num) { let c = String(num||"").replace(/\D/g,""); return c.length === 10 ? "91" + c : c; }
+
+    function directWhatsappOrder(productId) {
+      const p = products.find(item => String(item.id) === String(productId));
+      if (!p || !currentStore) return;
+      const phone = cleanWhatsappNumber(currentStore.whatsapp_number);
+      const msg = `🛍️ *NEW ORDER ON SHOPKART*\n🏪 *Store:* ${currentStore.store_name}\n---------------------------\n👕 *Product:* ${p.name}\n📏 *Size:* ${selectedSizes[p.id]}\n💰 *Price:* ₹${p.selling_price} (MRP ₹${p.mrp})`;
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    function addToCart(productId) {
+      const p = products.find(i => String(i.id) === String(productId));
+      if (!p) return;
+      const size = selectedSizes[p.id] || "Free";
+      const existing = cart.find(c => String(c.id) === String(p.id) && c.size === size);
+      if (existing) existing.qty += 1; else cart.push({ id: p.id, name: p.name, price: Number(p.selling_price), size, qty: 1 });
+      document.getElementById("cartCountBadge").innerText = cart.reduce((s, i) => s + i.qty, 0);
+    }
+
+    function openCartModal() {
+      const box = document.getElementById("cartItemsContainer");
+      if (!cart.length) { box.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Your bag is empty.</p>`; }
+      else {
+        box.innerHTML = cart.map((item, idx) => `
+          <div class="flex items-center justify-between text-xs border-b dark:border-gray-800 pb-2">
+            <div><div class="font-bold">${escapeHtml(item.name)}</div><div class="text-gray-500">Size: ${item.size} • ₹${item.price} x ${item.qty}</div></div>
+            <div class="flex items-center gap-2"><span class="font-bold">₹${item.price * item.qty}</span><button onclick="removeCartItem(${idx})" class="text-red-500 font-bold">✕</button></div>
+          </div>
+        `).join("");
+      }
+      document.getElementById("cartTotalAmount").innerText = `₹${cart.reduce((s, i) => s + i.price * i.qty, 0)}`;
+      document.getElementById("cartModal").classList.remove("hidden");
+    }
+    function removeCartItem(idx) { cart.splice(idx, 1); document.getElementById("cartCountBadge").innerText = cart.reduce((s, i) => s + i.qty, 0); openCartModal(); }
+    function closeCartModal() { document.getElementById("cartModal").classList.add("hidden"); }
+
+    function checkoutCartOnWhatsapp() {
+      if (!cart.length) return alert("Pehle kapde bag mein add karein!");
+      const name = document.getElementById("custName").value.trim() || "Customer";
+      const addr = document.getElementById("custAddress").value.trim() || "Not Provided";
+      const phone = cleanWhatsappNumber(currentStore.whatsapp_number);
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const lines = cart.map((i, idx) => `${idx + 1}. ${i.name} (Size: ${i.size}) x${i.qty} = ₹${i.price * i.qty}`).join("\n");
+      const msg = `🛍️ *NEW BAG ORDER - ${currentStore.store_name.toUpperCase()}*\n---------------------------\n${lines}\n---------------------------\n💵 *Total:* ₹${total}\n👤 *Customer:* ${name}\n📍 *Address:* ${addr}`;
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    // SELLER PANEL
+    function openSellerModal() {
+      document.getElementById("sellerModal").classList.remove("hidden");
+      if (loggedInSeller) showSellerDashboard();
+      else { document.getElementById("sellerAuthView").classList.remove("hidden"); document.getElementById("sellerDashboardView").classList.add("hidden"); }
+    }
+    function closeSellerModal() { document.getElementById("sellerModal").classList.add("hidden"); }
+
+    async function sellerLogin() {
+      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("loginPass").value.trim();
+      const found = stores.find(s => s.owner_email.toLowerCase() === email && s.password === pass);
+      if (!found) return alert("Invalid Gmail or Password!");
+      loggedInSeller = found; document.getElementById("sellerBtnText").innerText = "My Store Panel"; showSellerDashboard();
+    }
+
+    async function sellerRegister() {
+      const name = document.getElementById("regStoreName").value.trim();
+      const wa = cleanWhatsappNumber(document.getElementById("regWhatsapp").value.trim());
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("regPass").value.trim();
+
+      if (!name || !wa || !email || !pass) return alert("⚠️ All 4 options (Shop Name, WhatsApp, Email, Password) are mandatory!");
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + Math.floor(100 + Math.random() * 900);
+      const exp = new Date(); exp.setDate(exp.getDate() + 7);
+
+      const newStore = {
+        store_name: name, owner_email: email, password: pass, store_slug: slug, whatsapp_number: wa,
+        banner_title: "FESTIVE COLLECTION UP TO 50% OFF", address: "", categories: ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"],
+        is_active: true, status: "ACTIVE", product_limit: 150, expires_at: exp.toISOString()
+      };
+
+      const { data, error } = await client.from("shopkart_stores").insert([newStore]).select().single();
+      if (error) return alert("Error: " + error.message);
+      stores.unshift(data); loggedInSeller = data; currentStore = loggedInSeller;
+      populateStoreSelector(); renderStorefront(); showSellerDashboard();
+    }
+
+    function showSellerDashboard() {
+      document.getElementById("sellerAuthView").classList.add("hidden");
+      document.getElementById("sellerDashboardView").classList.remove("hidden");
+      const link = `${window.location.origin}${window.location.pathname}?store=${loggedInSeller.store_slug}`;
+      document.getElementById("sellerShareLink").innerText = link;
+      document.getElementById("setStoreName").value = loggedInSeller.store_name;
+      document.getElementById("setWhatsapp").value = loggedInSeller.whatsapp_number;
+      document.getElementById("setBannerTitle").value = loggedInSeller.banner_title || "";
+      document.getElementById("setAddress").value = loggedInSeller.address || "";
+      document.getElementById("prodCategory").innerHTML = (loggedInSeller.categories || []).map(c => `<option value="${c}">${c}</option>`).join("");
+      renderSellerCategoriesPills();
+      renderSellerProducts();
+    }
+
+    function renderSellerCategoriesPills() {
+      const cats = loggedInSeller.categories || [];
+      document.getElementById("sellerCategoriesPills").innerHTML = cats.map((c, idx) => `
+        <div class="px-3 py-1.5 rounded-lg border dark:border-gray-700 flex items-center gap-2 text-xs font-bold">
+          <span>🏷️ ${escapeHtml(c)}</span>
+          <button onclick="removeFashionCategory(${idx})" class="text-red-500 font-bold">✕</button>
+        </div>
+      `).join("");
+    }
+
+    async function addCustomFashionCategory() {
+      const inp = document.getElementById("newCategoryInput"), val = inp.value.trim();
+      if (!val) return alert("Category name likhein!");
+      loggedInSeller.categories = loggedInSeller.categories || [];
+      if (!loggedInSeller.categories.includes(val)) loggedInSeller.categories.push(val);
+      inp.value = "";
+      await client.from("shopkart_stores").update({ categories: loggedInSeller.categories }).eq("id", loggedInSeller.id);
+      showSellerDashboard(); renderStorefront();
+    }
+
+    async function removeFashionCategory(idx) {
+      if ((loggedInSeller.categories || []).length <= 1) return alert("Kam se kam 1 category rehna zaroori hai!");
+      loggedInSeller.categories.splice(idx, 1);
+      await client.from("shopkart_stores").update({ categories: loggedInSeller.categories }).eq("id", loggedInSeller.id);
+      showSellerDashboard(); renderStorefront();
+    }
+
+    async function saveStoreSettings() {
+      const updatedName = document.getElementById("setStoreName").value.trim();
+      const updatedWa = cleanWhatsappNumber(document.getElementById("setWhatsapp").value.trim());
+      if (!updatedName || !updatedWa) return alert("Shop Name aur WhatsApp number zaroori hai!");
+      loggedInSeller.store_name = updatedName; loggedInSeller.whatsapp_number = updatedWa;
+      await client.from("shopkart_stores").update({ store_name: updatedName, whatsapp_number: updatedWa }).eq("id", loggedInSeller.id);
+      currentStore = loggedInSeller; populateStoreSelector(); renderStorefront(); showSellerDashboard();
+      alert("✅ Settings saved!");
+    }
+
+    function compressFashionImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const scale = Math.min(1, 600 / img.width);
+            canvas.width = img.width * scale; canvas.height = img.height * scale;
+            const ctx = canvas.getContext("2d"); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob((blob) => resolve({ blob, dataUrl: canvas.toDataURL("image/webp", 0.68) }), "image/webp", 0.68);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function addFashionProduct() {
+      const name = document.getElementById("prodName").value.trim();
+      const category = document.getElementById("prodCategory").value;
+      const sizes = document.getElementById("prodSizes").value.split(",").map(s => s.trim()).filter(Boolean);
+      const price = Number(document.getElementById("prodPrice").value);
+      const mrp = Number(document.getElementById("prodMrp").value);
+      const fileInput = document.getElementById("prodImageFile");
+
+      if (!name || !price || !mrp || !fileInput.files[0]) return alert("Product Name, Price, MRP aur Photo select karein!");
+
+      const compressed = await compressFashionImage(fileInput.files[0]);
+      let finalImageUrl = compressed.dataUrl, storagePath = `${loggedInSeller.id}/${Date.now()}.webp`;
+
+      try {
+        const { error: upErr } = await client.storage.from("shopkart-images").upload(storagePath, compressed.blob, { contentType: "image/webp" });
+        if (!upErr) { const { data: pubUrl } = client.storage.from("shopkart-images").getPublicUrl(storagePath); finalImageUrl = pubUrl.publicUrl; }
+      } catch(e) {}
+
+      const newProd = {
+        store_id: loggedInSeller.id, name, category, selling_price: price, mrp,
+        sizes: sizes.length ? sizes : ["Free Size"], rating: 4.3, image_url: finalImageUrl, image_path: storagePath, in_stock: true
+      };
+
+      const { data } = await client.from("shopkart_products").insert([newProd]).select().single();
+      if (data) products.unshift(data);
+      document.getElementById("prodName").value = ""; document.getElementById("prodPrice").value = ""; document.getElementById("prodMrp").value = ""; fileInput.value = "";
+      renderSellerProducts(); renderStorefront(); alert("✅ Product uploaded successfully!");
+    }
+
+    function renderSellerProducts() {
+      const myProds = products.filter(p => String(p.store_id) === String(loggedInSeller.id));
+      document.getElementById("sellerProductList").innerHTML = myProds.map(p => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl border dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40">
+          <div class="flex items-center gap-2.5">
+            <img src="${escapeHtml(p.image_url)}" class="w-12 h-14 object-cover rounded-lg" />
+            <div>
+              <div class="font-bold text-xs">${escapeHtml(p.name)}</div>
+              <div class="text-[11px] text-gray-500">₹${p.selling_price} (MRP ₹${p.mrp}) • ${escapeHtml(p.category)}</div>
+            </div>
+          </div>
+          <button onclick="deleteProduct('${p.id}')" class="px-2.5 py-1 rounded bg-red-500/10 text-red-600 text-xs font-bold">Delete</button>
+        </div>
+      `).join("");
+    }
+
+    async function deleteProduct(prodId) {
+      if (!confirm("Delete this product?")) return;
+      const target = products.find(p => String(p.id) === String(prodId));
+      if (target?.image_path) await client.storage.from("shopkart-images").remove([target.image_path]);
+      await client.from("shopkart_products").delete().eq("id", prodId);
+      products = products.filter(p => String(p.id) !== String(prodId));
+      renderSellerProducts(); renderStorefront();
+    }
+
+    function sellerLogout() { loggedInSeller = null; document.getElementById("sellerBtnText").innerText = "Dukandar Login"; closeSellerModal(); }
+
+    function openAdminModal() { document.getElementById("adminModal").classList.remove("hidden"); }
+    function closeAdminModal() { document.getElementById("adminModal").classList.add("hidden"); }
+    function verifyAdmin() {
+      if (document.getElementById("adminPinInput").value !== SUPER_ADMIN_PIN) return alert("Wrong PIN!");
+      document.getElementById("adminLoginGate").classList.add("hidden");
+      document.getElementById("adminControlView").classList.remove("hidden");
+      document.getElementById("adminStoresList").innerHTML = stores.map(s => `<div class="p-3 rounded border dark:border-gray-800 flex justify-between items-center text-xs"><b>${s.store_name}</b><a href="?store=${s.store_slug}" target="_blank" class="text-amber-400 underline">Open Link</a></div>`).join("");
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle("dark");
+      const isDark = document.documentElement.classList.contains("dark");
+      localStorage.setItem("shopkart_theme", isDark ? "dark" : "light");
+      document.getElementById("themeIcon").innerText = isDark ? "☀️" : "🌙";
+    }
+    function copyStoreLink() {
+      if (!currentStore) return;
+      navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?store=${currentStore.store_slug}`);
+      alert("Store Link Copied!");
+    }
+    function copyMySellerLink() {
+      navigator.clipboard.writeText(document.getElementById("sellerShareLink").innerText);
+      alert("Personal Link Copied!");
+    }
+    function goHome() { window.location.href = window.location.pathname; }
+
+    window.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
