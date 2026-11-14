@@ -39,7 +39,6 @@
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
           <span class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Shopkart</span>
-          <!-- Store Name Badge Next to Shopkart -->
           <span id="navStoreBadge" class="hidden sm:inline-block text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-900/10 text-emerald-800 dark:bg-amber-500/20 dark:text-amber-300 border border-emerald-800/20 dark:border-amber-400/30"></span>
         </div>
 
@@ -53,13 +52,13 @@
             <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-emerald-700 dark:bg-amber-500 text-white dark:text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
           </button>
 
-          <!-- Store Login / My Store Panel Button -->
+          <!-- Store Login / My Store Panel Button (Strictly Hidden for Customer Store Links) -->
           <button id="dukandarNavBtn" onclick="openSellerModal()" class="text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg bg-gray-900 text-white dark:bg-amber-500 dark:text-gray-950 hover:opacity-90 transition">
             <span id="sellerBtnText">Store Login</span>
           </button>
 
-          <!-- Super Admin Icon -->
-          <button id="adminNavBtn" onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white" title="Super Admin">
+          <!-- Super Admin Icon (Strictly Hidden for Customers) -->
+          <button id="adminNavBtn" onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white transition" title="Super Admin">
             ⚙️
           </button>
         </div>
@@ -83,19 +82,6 @@
 
   <!-- MAIN CUSTOMER STOREFRONT -->
   <main id="storefrontMain" class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4">
-    <div id="storeDirectoryBar" class="mb-4 hidden items-center justify-between flex-wrap gap-2 bg-emerald-950/5 dark:bg-gray-800/60 p-3 rounded-xl border border-emerald-900/10 dark:border-gray-700">
-      <div class="flex items-center gap-2 flex-wrap">
-        <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-amber-400">Active Store:</span>
-        <select id="storeSelector" onchange="switchStore(this.value)" class="text-xs sm:text-sm font-semibold bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5"></select>
-      </div>
-      <div class="flex items-center gap-2">
-        <span id="storeAddressDisplay" class="text-xs text-gray-600 dark:text-gray-400"></span>
-        <button onclick="copyStoreLink()" class="text-xs font-semibold px-2.5 py-1 rounded bg-emerald-800/10 text-emerald-800 dark:bg-amber-500/20 dark:text-amber-300 hover:opacity-80">
-          🔗 Copy Store Link
-        </button>
-      </div>
-    </div>
-
     <!-- Banner -->
     <div id="storeHeroBanner" class="relative rounded-2xl overflow-hidden mb-6 bg-gradient-to-r from-[#2c221e] via-[#43362e] to-[#2c221e] text-white shadow-md hidden">
       <div class="px-6 py-8 sm:py-12 md:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -266,7 +252,7 @@
         <!-- SECTION 4 -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-            <h4 class="font-bold text-sm">📦 Section 4: My Inventory & Products (Search & Edit)</h4>
+            <h4 class="font-bold text-sm">📦 Section 4: My Inventory & Products (Strictly Private)</h4>
             <input id="sellerSearchInventory" oninput="renderSellerProducts()" type="text" placeholder="Search my product..." class="px-3 py-1.5 rounded-lg border dark:border-gray-700 bg-transparent text-xs w-full sm:w-64" />
           </div>
           <div id="sellerProductList" class="grid sm:grid-cols-2 gap-2.5"></div>
@@ -376,7 +362,8 @@
     async function initApp() {
       if (localStorage.getItem("shopkart_theme") === "dark") {
         document.documentElement.classList.add("dark");
-        document.getElementById("themeIcon").innerText = "☀️";
+        const themeIcon = document.getElementById("themeIcon");
+        if (themeIcon) themeIcon.innerText = "☀️";
       }
 
       await loadDatabase();
@@ -393,31 +380,35 @@
       const params = new URLSearchParams(window.location.search);
       const requestedSlug = params.get("store");
 
+      const dukandarBtn = document.getElementById("dukandarNavBtn");
+      const adminBtn = document.getElementById("adminNavBtn");
+
       if (requestedSlug) {
-        // Case-insensitive lookup to prevent slug mismatch
+        // Customer visiting via store link: Hide Store Login and Admin Icon completely
         const found = stores.find(s => s.store_slug && s.store_slug.toLowerCase() === requestedSlug.toLowerCase());
         currentStore = found || null;
-        if (found) {
-          document.getElementById("storeDirectoryBar").classList.add("hidden");
-          if (!loggedInSeller || loggedInSeller.id !== found.id) {
-            document.getElementById("adminNavBtn").classList.add("hidden");
-          }
-        }
+        if (dukandarBtn) dukandarBtn.classList.add("hidden");
+        if (adminBtn) adminBtn.classList.add("hidden");
       } else {
+        // Normal visitor or logged-in seller viewing home
         if (loggedInSeller) {
           currentStore = loggedInSeller;
+          if (dukandarBtn) dukandarBtn.classList.remove("hidden");
+          if (adminBtn) adminBtn.classList.remove("hidden");
         } else {
           currentStore = null;
+          if (dukandarBtn) dukandarBtn.classList.remove("hidden");
+          if (adminBtn) adminBtn.classList.remove("hidden");
         }
       }
 
       updateNavbarAuthButton();
-      populateStoreSelector();
       renderStorefront();
     }
 
     function updateNavbarAuthButton() {
       const btnText = document.getElementById("sellerBtnText");
+      if (!btnText) return;
       if (loggedInSeller) {
         btnText.innerText = "My Store Panel";
       } else {
@@ -437,19 +428,6 @@
       }
     }
 
-    function populateStoreSelector() {
-      const sel = document.getElementById("storeSelector");
-      sel.innerHTML = stores.map(s => `<option value="${s.store_slug}" ${currentStore && s.id === currentStore.id ? 'selected' : ''}>${s.store_name} (?store=${s.store_slug})</option>`).join("");
-    }
-
-    function switchStore(slug) {
-      currentStore = stores.find(s => s.store_slug === slug) || null;
-      activeCategory = "All";
-      cart = [];
-      updateCartUI();
-      renderStorefront();
-    }
-
     function isStoreValid(store) {
       if (!store) return false;
       if (store.status === "SUSPENDED" || store.is_active === false) return false;
@@ -463,42 +441,56 @@
       const badgeEl = document.getElementById("navStoreBadge");
 
       if (!currentStore) {
-        bannerEl.classList.add("hidden");
-        badgeEl.innerText = "";
-        document.getElementById("productCountLabel").innerText = "0";
-        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">
-          <div class="text-4xl mb-2">🏪</div>
-          <h3 class="font-bold text-base text-white">Shopkart Fashion Marketplace</h3>
-          <p class="text-xs mt-1">Kripya upar <b>Store Login</b> par click karke apne account se login karein, ya apna store link kholein.</p>
-        </div>`;
+        if (bannerEl) bannerEl.classList.add("hidden");
+        if (badgeEl) badgeEl.innerText = "";
+        const countLabel = document.getElementById("productCountLabel");
+        if (countLabel) countLabel.innerText = "0";
+        if (grid) {
+          grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">
+            <div class="text-4xl mb-2">🏪</div>
+            <h3 class="font-bold text-base text-white">Shopkart Fashion Marketplace</h3>
+            <p class="text-xs mt-1">Kripya kisi specific dukandar ka store link kholein, ya upar <b>Store Login</b> karke apna panel access karein.</p>
+          </div>`;
+        }
         return;
       }
 
-      // Explicitly set store name badge next to Shopkart logo
-      badgeEl.innerText = currentStore.store_name;
+      if (badgeEl) badgeEl.innerText = currentStore.store_name;
 
       if (!isStoreValid(currentStore)) {
-        bannerEl.classList.add("hidden");
-        document.getElementById("storefrontMain").classList.add("hidden");
-        document.getElementById("expiredScreen").classList.remove("hidden");
+        if (bannerEl) bannerEl.classList.add("hidden");
+        const storefrontMain = document.getElementById("storefrontMain");
+        if (storefrontMain) storefrontMain.classList.add("hidden");
+        const expiredScreen = document.getElementById("expiredScreen");
+        if (expiredScreen) expiredScreen.classList.remove("hidden");
         return;
       } else {
-        document.getElementById("expiredScreen").classList.add("hidden");
-        bannerEl.classList.remove("hidden");
+        const expiredScreen = document.getElementById("expiredScreen");
+        if (expiredScreen) expiredScreen.classList.add("hidden");
+        const storefrontMain = document.getElementById("storefrontMain");
+        if (storefrontMain) storefrontMain.classList.remove("hidden");
+        if (bannerEl) bannerEl.classList.remove("hidden");
       }
 
-      document.getElementById("heroStoreName").innerText = `${currentStore.store_name} • Assured Fashion`;
-      document.getElementById("heroBannerTitle").innerText = currentStore.banner_title || "FESTIVE COLLECTION UP TO 50% OFF";
-      document.getElementById("heroWhatsappDisplay").innerText = `+${currentStore.whatsapp_number || 'Not Set'}`;
-      document.getElementById("storeAddressDisplay").innerText = currentStore.address ? `📍 ${currentStore.address}` : "";
+      const heroStoreName = document.getElementById("heroStoreName");
+      if (heroStoreName) heroStoreName.innerText = `${currentStore.store_name} • Assured Fashion`;
+      const heroBannerTitle = document.getElementById("heroBannerTitle");
+      if (heroBannerTitle) heroBannerTitle.innerText = currentStore.banner_title || "FESTIVE COLLECTION UP TO 50% OFF";
+      const heroWhatsappDisplay = document.getElementById("heroWhatsappDisplay");
+      if (heroWhatsappDisplay) heroWhatsappDisplay.innerText = `+${currentStore.whatsapp_number || 'Not Set'}`;
+      const storeAddressDisplay = document.getElementById("storeAddressDisplay");
+      if (storeAddressDisplay) storeAddressDisplay.innerText = currentStore.address ? `📍 ${currentStore.address}` : "";
 
       const cats = ["All", ...(currentStore.categories || ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"])];
-      document.getElementById("categoryBar").innerHTML = cats.map(c => {
-        const active = c === activeCategory;
-        return `<button onclick="selectCategory('${c.replace(/'/g, "\\'")}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
-          active ? 'bg-emerald-800 text-white dark:bg-amber-500 dark:text-gray-950 shadow-sm' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
-        }">${c}</button>`;
-      }).join("");
+      const categoryBar = document.getElementById("categoryBar");
+      if (categoryBar) {
+        categoryBar.innerHTML = cats.map(c => {
+          const active = c === activeCategory;
+          return `<button onclick="selectCategory('${c.replace(/'/g, "\\'")}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+            active ? 'bg-emerald-800 text-white dark:bg-amber-500 dark:text-gray-950 shadow-sm' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+          }">${c}</button>`;
+        }).join("");
+      }
 
       renderCustomerProducts();
     }
@@ -507,7 +499,9 @@
 
     function renderCustomerProducts() {
       if (!currentStore) return;
-      const query = (document.getElementById("searchInput").value || "").toLowerCase().trim();
+      const searchInput = document.getElementById("searchInput");
+      const query = (searchInput ? searchInput.value : "").toLowerCase().trim();
+      
       const storeProducts = products.filter(p => {
         const belongs = String(p.store_id) === String(currentStore.id) && p.in_stock !== false;
         const matchesCat = activeCategory === "All" || p.category === activeCategory;
@@ -515,8 +509,10 @@
         return belongs && matchesCat && matchesSearch;
       });
 
-      document.getElementById("productCountLabel").innerText = storeProducts.length;
+      const productCountLabel = document.getElementById("productCountLabel");
+      if (productCountLabel) productCountLabel.innerText = storeProducts.length;
       const grid = document.getElementById("productGrid");
+      if (!grid) return;
 
       if (!storeProducts.length) {
         grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500">Is dukaan (<span class="text-amber-400 font-bold">${currentStore.store_name}</span>) par abhi koi product upload nahi kiya gaya hai.</div>`;
@@ -632,7 +628,8 @@
       const size = selectedSizes[p.id] || "Free";
       const existing = cart.find(c => String(c.id) === String(p.id) && c.size === size);
       if (existing) existing.qty += 1; else cart.push({ id: p.id, name: p.name, price: Number(p.selling_price), size, qty: 1 });
-      document.getElementById("cartCountBadge").innerText = cart.reduce((s, i) => s + i.qty, 0);
+      const badge = document.getElementById("cartCountBadge");
+      if (badge) badge.innerText = cart.reduce((s, i) => s + i.qty, 0);
     }
 
     function openCartModal() {
@@ -649,7 +646,12 @@
       document.getElementById("cartTotalAmount").innerText = `₹${cart.reduce((s, i) => s + i.price * i.qty, 0)}`;
       document.getElementById("cartModal").classList.remove("hidden");
     }
-    function removeCartItem(idx) { cart.splice(idx, 1); document.getElementById("cartCountBadge").innerText = cart.reduce((s, i) => s + i.qty, 0); openCartModal(); }
+    function removeCartItem(idx) {
+      cart.splice(idx, 1);
+      const badge = document.getElementById("cartCountBadge");
+      if (badge) badge.innerText = cart.reduce((s, i) => s + i.qty, 0);
+      openCartModal();
+    }
     function closeCartModal() { document.getElementById("cartModal").classList.add("hidden"); }
 
     function checkoutCartOnWhatsapp() {
@@ -737,7 +739,7 @@
         warningBox.classList.remove("hidden");
       } else if (daysLeft < 0) {
         warningBox.innerText = `⚠️ Warning: Your subscription plan has expired! Please renew immediately.`;
-        warningBox.classList.remove("hidden");
+        warningBox.classList.add("hidden");
       } else {
         warningBox.classList.add("hidden");
       }
@@ -788,7 +790,7 @@
       loggedInSeller.store_name = updatedName; loggedInSeller.whatsapp_number = updatedWa; loggedInSeller.banner_title = updatedBanner; loggedInSeller.address = updatedAddr;
       
       await client.from("shopkart_stores").update({ store_name: updatedName, whatsapp_number: updatedWa, banner_title: updatedBanner, address: updatedAddr }).eq("id", loggedInSeller.id);
-      currentStore = loggedInSeller; populateStoreSelector(); renderStorefront(); showSellerDashboard();
+      currentStore = loggedInSeller; renderStorefront(); showSellerDashboard();
       alert("✅ WhatsApp number & settings saved successfully!");
     }
 
@@ -1020,7 +1022,8 @@
       document.documentElement.classList.toggle("dark");
       const isDark = document.documentElement.classList.contains("dark");
       localStorage.setItem("shopkart_theme", isDark ? "dark" : "light");
-      document.getElementById("themeIcon").innerText = isDark ? "☀️" : "🌙";
+      const themeIcon = document.getElementById("themeIcon");
+      if (themeIcon) themeIcon.innerText = isDark ? "☀️" : "🌙";
     }
     function copyStoreLink() {
       if (!currentStore) return;
@@ -1028,8 +1031,11 @@
       alert("Store Link Copied!");
     }
     function copyMySellerLink() {
-      navigator.clipboard.writeText(document.getElementById("sellerShareLink").innerText);
-      alert("Personal Link Copied!");
+      const linkEl = document.getElementById("sellerShareLink");
+      if (linkEl) {
+        navigator.clipboard.writeText(linkEl.innerText);
+        alert("Personal Link Copied!");
+      }
     }
     function goHome() { window.location.href = window.location.pathname; }
 
