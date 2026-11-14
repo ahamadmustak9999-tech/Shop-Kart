@@ -394,7 +394,8 @@
       const requestedSlug = params.get("store");
 
       if (requestedSlug) {
-        const found = stores.find(s => s.store_slug === requestedSlug);
+        // Case-insensitive lookup to prevent slug mismatch
+        const found = stores.find(s => s.store_slug && s.store_slug.toLowerCase() === requestedSlug.toLowerCase());
         currentStore = found || null;
         if (found) {
           document.getElementById("storeDirectoryBar").classList.add("hidden");
