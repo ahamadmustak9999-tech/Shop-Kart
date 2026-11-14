@@ -39,6 +39,7 @@
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
           <span class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Shopkart</span>
+          <!-- Store Name Badge Next to Shopkart -->
           <span id="navStoreBadge" class="hidden sm:inline-block text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-900/10 text-emerald-800 dark:bg-amber-500/20 dark:text-amber-300 border border-emerald-800/20 dark:border-amber-400/30"></span>
         </div>
 
@@ -52,10 +53,12 @@
             <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-emerald-700 dark:bg-amber-500 text-white dark:text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
           </button>
 
+          <!-- Store Login / My Store Panel Button -->
           <button id="dukandarNavBtn" onclick="openSellerModal()" class="text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg bg-gray-900 text-white dark:bg-amber-500 dark:text-gray-950 hover:opacity-90 transition">
             <span id="sellerBtnText">Store Login</span>
           </button>
 
+          <!-- Super Admin Icon -->
           <button id="adminNavBtn" onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white" title="Super Admin">
             ⚙️
           </button>
@@ -330,7 +333,7 @@
     </div>
   </div>
 
-  <!-- SUPER ADMIN MODAL (WITH PLAN PRICE & LIMIT CONTROLS) -->
+  <!-- SUPER ADMIN MODAL -->
   <div id="adminModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white dark:bg-gray-900 w-full max-w-5xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden my-8">
       <div class="flex items-center justify-between px-5 py-3.5 border-b dark:border-gray-800 bg-gray-900 text-white">
@@ -355,7 +358,7 @@
   <script>
     const SUPABASE_URL = "https://rcofrtcyhjgdsiotkkjq.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_6uFSLPyZ6w-VXAhkXgL5uA_cvFJO73C";
-    const SUPER_ADMIN_PIN = "@mustak742213"; // You can change this PIN anytime
+    const SUPER_ADMIN_PIN = "@mustak742213";
 
     const client = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -456,10 +459,11 @@
     function renderStorefront() {
       const bannerEl = document.getElementById("storeHeroBanner");
       const grid = document.getElementById("productGrid");
+      const badgeEl = document.getElementById("navStoreBadge");
 
       if (!currentStore) {
         bannerEl.classList.add("hidden");
-        document.getElementById("navStoreBadge").innerText = "";
+        badgeEl.innerText = "";
         document.getElementById("productCountLabel").innerText = "0";
         grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">
           <div class="text-4xl mb-2">🏪</div>
@@ -469,7 +473,8 @@
         return;
       }
 
-      document.getElementById("navStoreBadge").innerText = currentStore.store_name;
+      // Explicitly set store name badge next to Shopkart logo
+      badgeEl.innerText = currentStore.store_name;
 
       if (!isStoreValid(currentStore)) {
         bannerEl.classList.add("hidden");
@@ -657,7 +662,7 @@
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
     }
 
-    // SELLER PANEL & EXPIRY WARNING (ENGLISH)
+    // SELLER PANEL
     function openSellerModal() {
       document.getElementById("sellerModal").classList.remove("hidden");
       if (loggedInSeller) {
@@ -725,7 +730,6 @@
       document.getElementById("sellerSubInfo").innerText = `📦 Products: ${myCount} / ${limit} Max • Expiry: ${expDate.toLocaleDateString()}`;
       document.getElementById("sellerPlanPriceDisplay").innerText = `💳 Active Plan Price: ₹${loggedInSeller.plan_price || 499}`;
 
-      // 7 Days Expiry Warning in English
       const warningBox = document.getElementById("expiryWarningBox");
       if (daysLeft <= 7 && daysLeft >= 0) {
         warningBox.innerText = `⚠️ Warning: Your subscription plan is expiring in ${daysLeft} day(s)! Please renew your plan to keep your store active.`;
@@ -906,7 +910,7 @@
       window.location.href = window.location.pathname;
     }
 
-    // SUPER ADMIN PANEL (WITH PLAN PRICE SETTER)
+    // SUPER ADMIN PANEL
     function openAdminModal() { document.getElementById("adminModal").classList.remove("hidden"); }
     function closeAdminModal() { document.getElementById("adminModal").classList.add("hidden"); }
     
