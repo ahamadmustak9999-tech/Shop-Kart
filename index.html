@@ -56,7 +56,8 @@
             <span id="sellerBtnText">Dukandar Login</span>
           </button>
 
-          <button onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white" title="Super Admin">
+          <!-- Super Admin Secret Icon (Hidden automatically for customers) -->
+          <button id="adminNavBtn" onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white" title="Super Admin">
             ⚙️
           </button>
         </div>
@@ -75,8 +76,8 @@
   <!-- STORE EXPIRED / LOCKED BANNER -->
   <div id="expiredScreen" class="hidden max-w-xl mx-auto my-16 p-8 bg-white dark:bg-gray-900 rounded-2xl border border-red-300 dark:border-red-800 text-center shadow-lg">
     <div class="text-5xl mb-3">🔒</div>
-    <h2 class="text-2xl font-bold text-red-600 dark:text-red-400">Store Subscription Expired</h2>
-    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Is dukaan ka Shopkart subscription plan khatam ho chuka hai ya Admin dwara pause kiya gaya hai.</p>
+    <h2 class="text-2xl font-bold text-red-600 dark:text-red-400">Store Subscription Expired or Suspended</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Is dukaan ka Shopkart subscription plan khatam ho chuka hai ya Admin dwara suspend kiya gaya hai.</p>
   </div>
 
   <!-- MAIN CUSTOMER STOREFRONT -->
@@ -111,18 +112,18 @@
 
     <div class="flex items-center justify-between mb-3">
       <h2 class="text-base sm:text-lg font-bold">Fashion Catalogue (<span id="productCountLabel">0</span> Items)</h2>
-      <span class="text-xs text-gray-500 dark:text-gray-400">Tap product to view details</span>
+      <span class="text-xs text-gray-500 dark:text-gray-400">Tap product to view available sizes</span>
     </div>
 
     <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5"></div>
   </main>
 
-  <!-- FLIPKART-STYLE EXPANDED PRODUCT DETAIL MODAL -->
-  <div id="productDetailModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <!-- FLIPKART-STYLE EXPANDED PRODUCT DETAIL MODAL (WITH SIZES) -->
+  <div id="flipkartZoomModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white dark:bg-gray-900 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800 product-zoom-anim my-auto">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
         <div class="flex items-center gap-2">
-          <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded bg-indigo-600/20 text-indigo-400" id="zoomProdCategory">CATEGORY</span>
+          <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded bg-indigo-600/20 text-indigo-400" id="zoomProdCategory">CATEGORY</span>
           <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">✔ Shopkart Assured</span>
         </div>
         <button onclick="closeProductDetailModal()" class="h-8 w-8 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-red-500 font-bold text-base">✕</button>
@@ -136,7 +137,7 @@
 
         <div class="flex flex-col justify-between space-y-4">
           <div class="space-y-3">
-            <div class="text-xs font-semibold text-indigo-500 dark:text-indigo-400" id="zoomProdStoreName">Sold by: Fashion Store</div>
+            <div class="text-xs font-semibold text-indigo-500 dark:text-indigo-400" id="zoomProdStoreName">Sold by: Store</div>
             <h2 id="zoomProdTitle" class="text-lg sm:text-2xl font-extrabold leading-snug">Product Title</h2>
 
             <div class="p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 space-y-1">
@@ -146,23 +147,19 @@
                 <span id="zoomProdMrp" class="text-sm text-gray-400 line-through">₹1299</span>
                 <span id="zoomProdDiscount" class="text-sm font-extrabold text-[#388e3c] dark:text-emerald-400">61% off</span>
               </div>
-              <p class="text-[11px] text-gray-500">Inclusive of all taxes • Direct WhatsApp Checkout</p>
             </div>
 
             <div class="space-y-2 pt-1">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Select Size:</span>
-                <span class="text-[11px] text-indigo-500 dark:text-indigo-400 font-semibold">Size Chart Assured</span>
-              </div>
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Available Sizes:</span>
               <div id="zoomProdSizes" class="flex items-center gap-2 flex-wrap"></div>
             </div>
           </div>
 
           <div class="pt-4 border-t border-gray-200 dark:border-gray-800 flex gap-2.5">
-            <button id="zoomAddToBagBtn" class="flex-1 py-3 px-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
+            <button onclick="addZoomToBag()" class="flex-1 py-3 px-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
               <span>🛒 Add to Bag</span>
             </button>
-            <button id="zoomWhatsappOrderBtn" class="flex-[1.4] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg transition">
+            <button onclick="zoomWhatsappOrder()" class="flex-[1.4] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg transition">
               <span>Order on WhatsApp</span> 💬
             </button>
           </div>
@@ -171,7 +168,7 @@
     </div>
   </div>
 
-  <!-- SELLER PANEL MODAL -->
+  <!-- SELLER PANEL MODAL (STRUCTURED SECTIONS) -->
   <div id="sellerModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white dark:bg-gray-900 w-full max-w-4xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden my-8">
       <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
@@ -196,7 +193,7 @@
             <input id="regWhatsapp" type="tel" maxlength="10" required placeholder="2. WhatsApp Number (10 Digits) *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
             <input id="regEmail" type="email" required placeholder="3. Seller Gmail (Mandatory) *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
             <input id="regPass" type="password" required placeholder="Create Password (Mandatory) *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
-            <button onclick="sellerRegister()" class="w-full py-2.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-sm">Create My Store Link</button>
+            <button onclick="sellerRegister()" class="w-full py-2.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-sm">Create My Store Link (7 Days Free)</button>
           </div>
         </div>
       </div>
@@ -214,8 +211,9 @@
           </div>
         </div>
 
+        <!-- SECTION 1: STORE & WHATSAPP SETTINGS -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
-          <h4 class="font-bold text-sm sm:text-base mb-3 text-emerald-800 dark:text-amber-400">⚙️ Store & Custom WhatsApp Number Settings</h4>
+          <h4 class="font-bold text-sm sm:text-base mb-3 text-emerald-800 dark:text-amber-400">⚙️ Section 1: Store & WhatsApp Settings</h4>
           <div class="grid sm:grid-cols-2 gap-3">
             <div>
               <label class="text-xs font-semibold block mb-1">Shop Name</label>
@@ -239,17 +237,19 @@
           </button>
         </div>
 
+        <!-- SECTION 2: CATEGORIES MANAGER -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
-          <h4 class="font-bold text-sm sm:text-base text-indigo-400">🏷️ Custom Fashion Categories Manager</h4>
+          <h4 class="font-bold text-sm sm:text-base text-indigo-400">🏷️ Section 2: Custom Fashion Categories Manager</h4>
           <div class="flex gap-2">
-            <input id="newCategoryInput" type="text" placeholder="Add new category..." class="flex-1 px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
-            <button onclick="addCustomFashionCategory()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold">+ Add</button>
+            <input id="newCategoryInput" type="text" placeholder="Add new category (e.g. Winter Wear)..." class="flex-1 px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+            <button onclick="addCustomFashionCategory()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold">+ Add Category</button>
           </div>
           <div id="sellerCategoriesPills" class="flex flex-wrap gap-2 pt-1"></div>
         </div>
 
+        <!-- SECTION 3: ADD NEW PRODUCT -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
-          <h4 class="font-bold text-sm sm:text-base mb-3">👕 Add New Fashion Product</h4>
+          <h4 class="font-bold text-sm sm:text-base mb-3">👕 Section 3: Add New Fashion Product</h4>
           <div class="grid sm:grid-cols-3 gap-3 text-xs">
             <input id="prodName" type="text" placeholder="Outfit Name *" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
             <select id="prodCategory" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-900 text-xs"></select>
@@ -263,8 +263,12 @@
           </button>
         </div>
 
-        <div>
-          <h4 class="font-bold text-sm mb-2">📦 My Uploaded Products</h4>
+        <!-- SECTION 4: INVENTORY & SEARCH -->
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <h4 class="font-bold text-sm">📦 Section 4: My Inventory & Products</h4>
+            <input id="sellerSearchInventory" oninput="renderSellerProducts()" type="text" placeholder="Search my product..." class="px-3 py-1.5 rounded-lg border dark:border-gray-700 bg-transparent text-xs w-full sm:w-64" />
+          </div>
           <div id="sellerProductList" class="grid sm:grid-cols-2 gap-2.5"></div>
         </div>
       </div>
@@ -295,18 +299,22 @@
     </div>
   </div>
 
-  <!-- ADMIN MODAL -->
+  <!-- SUPER ADMIN MODAL (FULL STORE DETAILS & CUSTOM CALENDAR EXPIRY CONTROL) -->
   <div id="adminModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
-    <div class="bg-white dark:bg-gray-900 w-full max-w-4xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden my-8">
+    <div class="bg-white dark:bg-gray-900 w-full max-w-5xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden my-8">
       <div class="flex items-center justify-between px-5 py-3.5 border-b dark:border-gray-800 bg-gray-900 text-white">
-        <h3 class="font-bold text-base">🛡️ Shopkart Super Admin Control</h3>
+        <h3 class="font-bold text-base">🛡️ Shopkart Super Admin Master Control</h3>
         <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white text-xl font-bold">&times;</button>
       </div>
       <div id="adminLoginGate" class="p-6 max-w-sm mx-auto space-y-3">
+        <p class="text-xs text-gray-500">Default Admin PIN: <b>admin123</b></p>
         <input id="adminPinInput" type="password" placeholder="Enter Super Admin Password" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
         <button onclick="verifyAdmin()" class="w-full py-2.5 rounded-lg bg-emerald-800 text-white font-bold text-sm">Unlock Admin Panel</button>
       </div>
-      <div id="adminControlView" class="hidden p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+      <div id="adminControlView" class="hidden p-5 space-y-4 max-h-[82vh] overflow-y-auto">
+        <div class="flex justify-between items-center bg-amber-500/10 p-3 rounded-xl border border-amber-500/30 text-xs">
+          <span>👑 Admin Notice: Yahan aap sabhi dukandaron ke Email, Password, Mobile, aur Custom Expiry Calendar set kar sakte hain.</span>
+        </div>
         <div id="adminStoresList" class="space-y-3"></div>
       </div>
     </div>
@@ -347,6 +355,7 @@
         if (found) {
           document.getElementById("storeDirectoryBar").classList.add("hidden");
           document.getElementById("dukandarNavBtn").classList.add("hidden");
+          document.getElementById("adminNavBtn").classList.add("hidden"); // Hide Admin Icon for customers
         }
       } else {
         currentStore = stores[0];
@@ -381,10 +390,12 @@
       renderStorefront();
     }
 
+    // AUTOMATIC SUSPEND CHECK AFTER 7 DAYS TRIAL OR CUSTOM EXPIRY
     function isStoreValid(store) {
       if (!store) return false;
-      const exp = new Date(store.expires_at || store.subscription_expiry || Date.now());
-      return store.status !== "SUSPENDED" && new Date() <= exp;
+      if (store.status === "SUSPENDED" || store.is_active === false) return false;
+      const expDate = new Date(store.expires_at || store.subscription_expiry || Date.now());
+      return new Date() <= expDate;
     }
 
     function renderStorefront() {
@@ -442,10 +453,9 @@
 
         return `
         <div class="bg-white dark:bg-[#151c28] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
-          <!-- Clickable image to open Flipkart-style zoom view -->
           <div onclick="openProductDetailModal('${p.id}')" class="relative aspect-fashion bg-gray-100 dark:bg-gray-800 overflow-hidden cursor-pointer group">
             <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-            <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur">🔍 View</span>
+            <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur">🔍 View Size</span>
             <span class="absolute bottom-2 left-2 bg-emerald-700 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow">${p.rating || '4.3'} ★</span>
             <span class="absolute bottom-2 right-2 bg-white/95 text-blue-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">✔ Assured</span>
           </div>
@@ -454,12 +464,7 @@
             <div>
               <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400">${escapeHtml(p.category)}</div>
               <h3 onclick="openProductDetailModal('${p.id}')" class="font-semibold text-xs sm:text-sm line-clamp-1 mt-0.5 cursor-pointer hover:text-indigo-400 transition">${escapeHtml(p.name)}</h3>
-              <div class="mt-2 flex items-center gap-1 flex-wrap">
-                ${sizes.map(sz => {
-                  const isSel = selectedSizes[p.id] === sz;
-                  return `<button onclick="chooseSize('${p.id}', '${escapeHtml(sz)}')" class="text-[10px] font-bold px-2 py-0.5 rounded border transition ${isSel ? 'bg-gray-900 text-white dark:bg-amber-400 dark:text-black' : 'border-gray-300 dark:border-gray-700'}">${escapeHtml(sz)}</button>`;
-                }).join("")}
-              </div>
+              <div class="mt-2 text-[10px] font-bold text-emerald-400">Sizes: ${(p.sizes || ["Free Size"]).join(", ")}</div>
               <div onclick="openProductDetailModal('${p.id}')" class="mt-2.5 flex items-baseline gap-1.5 flex-wrap cursor-pointer">
                 <span class="font-extrabold text-sm sm:text-base">₹${p.selling_price}</span>
                 <span class="text-xs text-gray-400 line-through">₹${p.mrp}</span>
@@ -475,13 +480,7 @@
       }).join("");
     }
 
-    function chooseSize(productId, size) {
-      selectedSizes[productId] = size;
-      renderCustomerProducts();
-      if (activeZoomProductId === productId) renderZoomModalSizes(productId);
-    }
-
-    // FLIPKART-STYLE EXPANDED PRODUCT DETAIL MODAL
+    // FLIPKART-STYLE ZOOM & SIZES MODAL
     function openProductDetailModal(productId) {
       const p = products.find(x => String(x.id) === String(productId));
       if (!p || !currentStore) return;
@@ -493,56 +492,16 @@
       const sizes = Array.isArray(p.sizes) && p.sizes.length ? p.sizes : ["Free Size"];
       if (!selectedSizes[p.id]) selectedSizes[p.id] = sizes[0];
 
-      // Build modal HTML dynamically
-      let modalEl = document.getElementById("flipkartZoomModal");
-      if (!modalEl) {
-        modalEl = document.createElement("div");
-        modalEl.id = "flipkartZoomModal";
-        modalEl.className = "fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto";
-        document.body.appendChild(modalEl);
-      }
+      document.getElementById("zoomProdCategory").innerText = p.category;
+      document.getElementById("zoomProdImage").src = p.image_url;
+      document.getElementById("zoomProdStoreName").innerText = `Sold by: ${currentStore.store_name}`;
+      document.getElementById("zoomProdTitle").innerText = p.name;
+      document.getElementById("zoomProdPrice").innerText = `₹${sell}`;
+      document.getElementById("zoomProdMrp").innerText = `₹${mrp}`;
+      document.getElementById("zoomProdDiscount").innerText = `${discount}% off`;
 
-      modalEl.innerHTML = `
-        <div class="bg-white dark:bg-gray-900 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800 product-zoom-anim my-auto">
-          <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded bg-indigo-600/20 text-indigo-400">${escapeHtml(p.category)}</span>
-              <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">✔ Shopkart Assured</span>
-            </div>
-            <button onclick="closeProductDetailModal()" class="h-8 w-8 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-red-500 font-bold text-base">✕</button>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 sm:p-6 max-h-[82vh] overflow-y-auto">
-            <div class="relative aspect-fashion rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-              <img src="${escapeHtml(p.image_url)}" class="w-full h-full object-cover" />
-              <span class="absolute bottom-3 left-3 bg-[#388e3c] text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-lg">${p.rating || '4.3'} ★</span>
-            </div>
-            <div class="flex flex-col justify-between space-y-4">
-              <div class="space-y-3">
-                <div class="text-xs font-semibold text-indigo-500 dark:text-indigo-400">Sold by: ${escapeHtml(currentStore.store_name)}</div>
-                <h2 class="text-lg sm:text-2xl font-extrabold leading-snug">${escapeHtml(p.name)}</h2>
-                <div class="p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 space-y-1">
-                  <div class="text-[11px] font-bold text-[#388e3c] dark:text-emerald-400">Special Festival Price</div>
-                  <div class="flex items-baseline gap-2.5 flex-wrap">
-                    <span class="text-2xl sm:text-3xl font-extrabold">₹${sell}</span>
-                    <span class="text-sm text-gray-400 line-through">₹${mrp}</span>
-                    <span class="text-sm font-extrabold text-[#388e3c] dark:text-emerald-400">${discount}% off</span>
-                  </div>
-                </div>
-                <div class="space-y-2 pt-1">
-                  <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Select Size:</span>
-                  <div id="zoomProdSizes" class="flex items-center gap-2 flex-wrap"></div>
-                </div>
-              </div>
-              <div class="pt-4 border-t border-gray-200 dark:border-gray-800 flex gap-2.5">
-                <button onclick="addToCart('${p.id}'); closeProductDetailModal(); openCartModal();" class="flex-1 py-3 px-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition"><span>🛒 Add to Bag</span></button>
-                <button onclick="directWhatsappOrder('${p.id}')" class="flex-[1.4] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg transition"><span>Order on WhatsApp</span> 💬</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
       renderZoomModalSizes(p.id);
-      modalEl.classList.remove("hidden");
+      document.getElementById("flipkartZoomModal").classList.remove("hidden");
     }
 
     function renderZoomModalSizes(productId) {
@@ -554,13 +513,30 @@
       if (!box) return;
       box.innerHTML = sizes.map(sz => {
         const isSel = currentSz === sz;
-        return `<button onclick="chooseSize('${p.id}', '${escapeHtml(sz)}')" class="px-4 py-2 rounded-xl text-xs font-extrabold border-2 transition ${isSel ? 'bg-indigo-600 text-white border-indigo-400 shadow-md scale-105' : 'border-gray-300 dark:border-gray-700'}">${escapeHtml(sz)}</button>`;
+        return `<button onclick="chooseZoomSize('${p.id}', '${escapeHtml(sz)}')" class="px-4 py-2 rounded-xl text-xs font-extrabold border-2 transition ${isSel ? 'bg-indigo-600 text-white border-indigo-400 shadow-md scale-105' : 'border-gray-300 dark:border-gray-700'}">${escapeHtml(sz)}</button>`;
       }).join("");
     }
 
+    function chooseZoomSize(productId, size) {
+      selectedSizes[productId] = size;
+      renderZoomModalSizes(productId);
+      renderCustomerProducts();
+    }
+
+    function addZoomToBag() {
+      if (!activeZoomProductId) return;
+      addToCart(activeZoomProductId);
+      closeProductDetailModal();
+      openCartModal();
+    }
+
+    function zoomWhatsappOrder() {
+      if (!activeZoomProductId) return;
+      directWhatsappOrder(activeZoomProductId);
+    }
+
     function closeProductDetailModal() {
-      const modalEl = document.getElementById("flipkartZoomModal");
-      if (modalEl) modalEl.classList.add("hidden");
+      document.getElementById("flipkartZoomModal").classList.add("hidden");
       activeZoomProductId = null;
     }
 
@@ -635,10 +611,10 @@
 
       if (!name || !wa || !email || !pass) return alert("⚠️ All 4 options (Shop Name, WhatsApp, Email, Password) are mandatory!");
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + Math.floor(100 + Math.random() * 900);
-      const exp = new Date(); exp.setDate(exp.getDate() + 7);
+      const exp = new Date(); exp.setDate(exp.getDate() + 7); // 7 Days Free Trial
 
       const newStore = {
-        store_name: name, owner_email: email, password: pass, store_slug: slug, whatsapp_number: wa,
+        store_name: name, owner_email: email, password: pass, owner_phone: wa, store_slug: slug, whatsapp_number: wa,
         banner_title: "FESTIVE COLLECTION UP TO 50% OFF", address: "", categories: ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"],
         is_active: true, status: "ACTIVE", product_limit: 150, expires_at: exp.toISOString()
       };
@@ -654,6 +630,11 @@
       document.getElementById("sellerDashboardView").classList.remove("hidden");
       const link = `${window.location.origin}${window.location.pathname}?store=${loggedInSeller.store_slug}`;
       document.getElementById("sellerShareLink").innerText = link;
+      
+      const expDate = new Date(loggedInSeller.expires_at || loggedInSeller.subscription_expiry);
+      const daysLeft = Math.ceil((expDate - new Date()) / 86400000);
+      document.getElementById("sellerSubInfo").innerText = `Subscription Status: ${daysLeft > 0 ? daysLeft + ' Days Remaining (Active)' : 'EXPIRED / SUSPENDED'} (Expires: ${expDate.toLocaleString()})`;
+
       document.getElementById("setStoreName").value = loggedInSeller.store_name;
       document.getElementById("setWhatsapp").value = loggedInSeller.whatsapp_number;
       document.getElementById("setBannerTitle").value = loggedInSeller.banner_title || "";
@@ -693,9 +674,13 @@
     async function saveStoreSettings() {
       const updatedName = document.getElementById("setStoreName").value.trim();
       const updatedWa = cleanWhatsappNumber(document.getElementById("setWhatsapp").value.trim());
+      const updatedBanner = document.getElementById("setBannerTitle").value.trim();
+      const updatedAddr = document.getElementById("setAddress").value.trim();
+
       if (!updatedName || !updatedWa) return alert("Shop Name aur WhatsApp number zaroori hai!");
-      loggedInSeller.store_name = updatedName; loggedInSeller.whatsapp_number = updatedWa;
-      await client.from("shopkart_stores").update({ store_name: updatedName, whatsapp_number: updatedWa }).eq("id", loggedInSeller.id);
+      loggedInSeller.store_name = updatedName; loggedInSeller.whatsapp_number = updatedWa; loggedInSeller.banner_title = updatedBanner; loggedInSeller.address = updatedAddr;
+      
+      await client.from("shopkart_stores").update({ store_name: updatedName, whatsapp_number: updatedWa, banner_title: updatedBanner, address: updatedAddr }).eq("id", loggedInSeller.id);
       currentStore = loggedInSeller; populateStoreSelector(); renderStorefront(); showSellerDashboard();
       alert("✅ Settings saved!");
     }
@@ -747,15 +732,18 @@
       renderSellerProducts(); renderStorefront(); alert("✅ Product uploaded successfully!");
     }
 
+    // INVENTORY & PRODUCT SEARCH
     function renderSellerProducts() {
-      const myProds = products.filter(p => String(p.store_id) === String(loggedInSeller.id));
+      const searchQ = (document.getElementById("sellerSearchInventory")?.value || "").toLowerCase().trim();
+      const myProds = products.filter(p => String(p.store_id) === String(loggedInSeller.id) && (!searchQ || p.name.toLowerCase().includes(searchQ) || p.category.toLowerCase().includes(searchQ)));
+      
       document.getElementById("sellerProductList").innerHTML = myProds.map(p => `
         <div class="flex items-center justify-between p-2.5 rounded-xl border dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40">
           <div class="flex items-center gap-2.5">
             <img src="${escapeHtml(p.image_url)}" class="w-12 h-14 object-cover rounded-lg" />
             <div>
               <div class="font-bold text-xs">${escapeHtml(p.name)}</div>
-              <div class="text-[11px] text-gray-500">₹${p.selling_price} (MRP ₹${p.mrp}) • ${escapeHtml(p.category)}</div>
+              <div class="text-[11px] text-gray-500">₹${p.selling_price} • Sizes: ${(p.sizes||[]).join(", ")}</div>
             </div>
           </div>
           <button onclick="deleteProduct('${p.id}')" class="px-2.5 py-1 rounded bg-red-500/10 text-red-600 text-xs font-bold">Delete</button>
@@ -774,13 +762,78 @@
 
     function sellerLogout() { loggedInSeller = null; document.getElementById("sellerBtnText").innerText = "Dukandar Login"; closeSellerModal(); }
 
+    // SUPER ADMIN PANEL (FULL DETAILS & CUSTOM CALENDAR EXPIRY)
     function openAdminModal() { document.getElementById("adminModal").classList.remove("hidden"); }
     function closeAdminModal() { document.getElementById("adminModal").classList.add("hidden"); }
+    
     function verifyAdmin() {
-      if (document.getElementById("adminPinInput").value !== SUPER_ADMIN_PIN) return alert("Wrong PIN!");
+      if (document.getElementById("adminPinInput").value !== SUPER_ADMIN_PIN) return alert("Wrong Admin PIN!");
       document.getElementById("adminLoginGate").classList.add("hidden");
       document.getElementById("adminControlView").classList.remove("hidden");
-      document.getElementById("adminStoresList").innerHTML = stores.map(s => `<div class="p-3 rounded border dark:border-gray-800 flex justify-between items-center text-xs"><b>${s.store_name}</b><a href="?store=${s.store_slug}" target="_blank" class="text-amber-400 underline">Open Link</a></div>`).join("");
+      renderAdminStoresList();
+    }
+
+    function renderAdminStoresList() {
+      document.getElementById("adminStoresList").innerHTML = stores.map(s => {
+        const expIso = (s.expires_at || s.subscription_expiry || new Date().toISOString()).slice(0, 16);
+        const isActive = s.status !== "SUSPENDED" && s.is_active !== false;
+        return `
+        <div class="p-4 rounded-xl border dark:border-gray-800 bg-slate-900 space-y-3">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div>
+              <h4 class="font-bold text-base text-white">${escapeHtml(s.store_name)}</h4>
+              <div class="text-xs text-gray-400 space-x-2 mt-0.5">
+                <span>📧 Email: <b>${escapeHtml(s.owner_email)}</b></span>
+                <span>🔑 Pass: <b>${escapeHtml(s.password)}</b></span>
+                <span>📞 Mobile: <b>+${escapeHtml(s.owner_phone || s.whatsapp_number)}</b></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}">
+                ${isActive ? 'ACTIVE' : 'SUSPENDED'}
+              </span>
+              <button onclick="adminToggleStoreStatus('${s.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold ${isActive ? 'bg-amber-600 text-white' : 'bg-emerald-600 text-white'}">
+                ${isActive ? 'Pause / Suspend' : 'Activate Store'}
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-slate-800 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-gray-300">📅 Custom Subscription Expiry (Calendar & Time):</span>
+              <input type="datetime-local" id="expiryInput_${s.id}" value="${expIso}" class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-xs text-white" />
+            </div>
+            <button onclick="adminSaveExpiry('${s.id}')" class="px-4 py-1.5 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold">
+              💾 Save Expiry
+            </button>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    async function adminToggleStoreStatus(storeId) {
+      const s = stores.find(x => String(x.id) === String(storeId));
+      if (!s) return;
+      const newStatus = (s.status === "SUSPENDED" || s.is_active === false) ? "ACTIVE" : "SUSPENDED";
+      s.status = newStatus; s.is_active = (newStatus === "ACTIVE");
+
+      await client.from("shopkart_stores").update({ status: newStatus, is_active: (newStatus === "ACTIVE") }).eq("id", storeId);
+      renderAdminStoresList();
+      renderStorefront();
+      alert(`✅ Store status updated to ${newStatus}`);
+    }
+
+    async function adminSaveExpiry(storeId) {
+      const val = document.getElementById(`expiryInput_${storeId}`).value;
+      if (!val) return alert("Sahi date aur time select karein!");
+      const newExpIso = new Date(val).toISOString();
+
+      const s = stores.find(x => String(x.id) === String(storeId));
+      if (s) { s.expires_at = newExpIso; s.subscription_expiry = newExpIso; }
+
+      await client.from("shopkart_stores").update({ expires_at: newExpIso, subscription_expiry: newExpIso }).eq("id", storeId);
+      renderAdminStoresList();
+      alert("✅ Custom subscription time successfully updated!");
     }
 
     function toggleTheme() {
