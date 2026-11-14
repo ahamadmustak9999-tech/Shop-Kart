@@ -52,18 +52,17 @@
             <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-emerald-700 dark:bg-amber-500 text-white dark:text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
           </button>
 
+          <!-- Store Login Button -->
           <button id="dukandarNavBtn" onclick="openSellerModal()" class="text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg bg-gray-900 text-white dark:bg-amber-500 dark:text-gray-950 hover:opacity-90 transition">
-            <span id="sellerBtnText">Dukandar Login</span>
+            <span id="sellerBtnText">Store Login</span>
           </button>
 
-          <!-- Super Admin Secret Icon (Hidden automatically for customers) -->
           <button id="adminNavBtn" onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white" title="Super Admin">
             ⚙️
           </button>
         </div>
       </div>
 
-      <!-- Search Bar -->
       <div class="mt-2.5 flex items-center bg-gray-100 dark:bg-gray-800/90 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
         <input id="searchInput" oninput="renderCustomerProducts()" type="text" placeholder="Search for kurtis, jeans, shirts, footwear..." class="w-full px-3.5 py-2 bg-transparent text-sm focus:outline-none" />
         <button class="px-4 py-2 bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-semibold text-sm">🔍</button>
@@ -95,8 +94,8 @@
       </div>
     </div>
 
-    <!-- Custom Store Hero Banner -->
-    <div class="relative rounded-2xl overflow-hidden mb-6 bg-gradient-to-r from-[#2c221e] via-[#43362e] to-[#2c221e] text-white shadow-md">
+    <!-- Banner -->
+    <div id="storeHeroBanner" class="relative rounded-2xl overflow-hidden mb-6 bg-gradient-to-r from-[#2c221e] via-[#43362e] to-[#2c221e] text-white shadow-md hidden">
       <div class="px-6 py-8 sm:py-12 md:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <span id="heroStoreName" class="inline-block text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded bg-amber-400 text-gray-950 mb-2">SHOPKART VERIFIED PARTNER</span>
@@ -105,7 +104,7 @@
         </div>
         <div class="text-xs bg-black/40 backdrop-blur px-3.5 py-2 rounded-xl border border-white/15">
           <div>💬 WhatsApp Order Desk:</div>
-          <div id="heroWhatsappDisplay" class="font-bold text-amber-300 text-sm mt-0.5">+91 9876543210</div>
+          <div id="heroWhatsappDisplay" class="font-bold text-amber-300 text-sm mt-0.5">Not Set</div>
         </div>
       </div>
     </div>
@@ -118,7 +117,7 @@
     <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5"></div>
   </main>
 
-  <!-- FLIPKART-STYLE EXPANDED PRODUCT DETAIL MODAL (WITH SIZES) -->
+  <!-- ZOOM MODAL -->
   <div id="flipkartZoomModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white dark:bg-gray-900 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800 product-zoom-anim my-auto">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
@@ -168,17 +167,17 @@
     </div>
   </div>
 
-  <!-- SELLER PANEL MODAL (STRUCTURED SECTIONS) -->
+  <!-- STORE LOGIN PANEL MODAL -->
   <div id="sellerModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white dark:bg-gray-900 w-full max-w-4xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden my-8">
       <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-        <h3 class="font-bold text-lg">🛍️ Shopkart Dukandar Panel</h3>
+        <h3 class="font-bold text-lg">🛍️ Shopkart Store Panel</h3>
         <button onclick="closeSellerModal()" class="text-gray-500 hover:text-red-500 text-xl font-bold">&times;</button>
       </div>
 
       <div id="sellerAuthView" class="p-5 sm:p-6 grid md:grid-cols-2 gap-6">
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
-          <h4 class="font-bold text-base mb-3">Existing Dukandar Login</h4>
+          <h4 class="font-bold text-base mb-3">Existing Store Login</h4>
           <div class="space-y-3">
             <input id="loginEmail" type="email" placeholder="Gmail Address *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
             <input id="loginPass" type="password" placeholder="Password *" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
@@ -211,7 +210,7 @@
           </div>
         </div>
 
-        <!-- SECTION 1: STORE & WHATSAPP SETTINGS -->
+        <!-- SECTION 1 -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
           <h4 class="font-bold text-sm sm:text-base mb-3 text-emerald-800 dark:text-amber-400">⚙️ Section 1: Store & WhatsApp Settings</h4>
           <div class="grid sm:grid-cols-2 gap-3">
@@ -232,22 +231,20 @@
               <input id="setAddress" type="text" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-sm" />
             </div>
           </div>
-          <button onclick="saveStoreSettings()" class="mt-3 px-5 py-2 rounded-lg bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-bold text-xs">
-            💾 Save Settings
-          </button>
+          <button onclick="saveStoreSettings()" class="mt-3 px-5 py-2 rounded-lg bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-bold text-xs">💾 Save Settings</button>
         </div>
 
-        <!-- SECTION 2: CATEGORIES MANAGER -->
+        <!-- SECTION 2 -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
           <h4 class="font-bold text-sm sm:text-base text-indigo-400">🏷️ Section 2: Custom Fashion Categories Manager</h4>
           <div class="flex gap-2">
-            <input id="newCategoryInput" type="text" placeholder="Add new category (e.g. Winter Wear)..." class="flex-1 px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+            <input id="newCategoryInput" type="text" placeholder="Add new category..." class="flex-1 px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
             <button onclick="addCustomFashionCategory()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold">+ Add Category</button>
           </div>
           <div id="sellerCategoriesPills" class="flex flex-wrap gap-2 pt-1"></div>
         </div>
 
-        <!-- SECTION 3: ADD NEW PRODUCT -->
+        <!-- SECTION 3 -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800">
           <h4 class="font-bold text-sm sm:text-base mb-3">👕 Section 3: Add New Fashion Product</h4>
           <div class="grid sm:grid-cols-3 gap-3 text-xs">
@@ -258,15 +255,13 @@
             <input id="prodMrp" type="number" placeholder="Original MRP (₹) *" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
             <input id="prodImageFile" type="file" accept="image/*" class="text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-emerald-800 file:text-white" />
           </div>
-          <button onclick="addFashionProduct()" id="uploadBtn" class="mt-3 px-5 py-2 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-xs">
-            + Upload Product
-          </button>
+          <button onclick="addFashionProduct()" id="uploadBtn" class="mt-3 px-5 py-2 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-xs">+ Upload Product</button>
         </div>
 
-        <!-- SECTION 4: INVENTORY & SEARCH -->
+        <!-- SECTION 4 -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-            <h4 class="font-bold text-sm">📦 Section 4: My Inventory & Products</h4>
+            <h4 class="font-bold text-sm">📦 Section 4: My Inventory & Products (Search & Edit)</h4>
             <input id="sellerSearchInventory" oninput="renderSellerProducts()" type="text" placeholder="Search my product..." class="px-3 py-1.5 rounded-lg border dark:border-gray-700 bg-transparent text-xs w-full sm:w-64" />
           </div>
           <div id="sellerProductList" class="grid sm:grid-cols-2 gap-2.5"></div>
@@ -275,7 +270,41 @@
     </div>
   </div>
 
-  <!-- WHATSAPP CART MODAL -->
+  <!-- EDIT PRODUCT MODAL -->
+  <div id="editProductModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl p-5 space-y-4">
+      <div class="flex justify-between items-center border-b dark:border-gray-800 pb-3">
+        <h3 class="font-bold text-base">✏️ Edit Product Details</h3>
+        <button onclick="closeEditModal()" class="text-gray-500 hover:text-red-500 font-bold text-lg">✕</button>
+      </div>
+      <input type="hidden" id="editProdId" />
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold block mb-1">Product Name</label>
+          <input id="editProdName" type="text" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-semibold block mb-1">Selling Price (₹)</label>
+            <input id="editProdPrice" type="number" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+          </div>
+          <div>
+            <label class="font-semibold block mb-1">Original MRP (₹)</label>
+            <input id="editProdMrp" type="number" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+          </div>
+        </div>
+        <div>
+          <label class="font-semibold block mb-1">Sizes (Comma separated)</label>
+          <input id="editProdSizes" type="text" class="w-full px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+        </div>
+      </div>
+      <button onclick="saveEditedProduct()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs">
+        💾 Save Changes
+      </button>
+    </div>
+  </div>
+
+  <!-- CART MODAL -->
   <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-3">
     <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden">
       <div class="flex items-center justify-between px-5 py-3.5 border-b dark:border-gray-800">
@@ -299,7 +328,7 @@
     </div>
   </div>
 
-  <!-- SUPER ADMIN MODAL (FULL STORE DETAILS & CUSTOM CALENDAR EXPIRY CONTROL) -->
+  <!-- SUPER ADMIN MODAL (WITH SEARCH & CUSTOM ITEM LIMIT SETTER) -->
   <div id="adminModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white dark:bg-gray-900 w-full max-w-5xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden my-8">
       <div class="flex items-center justify-between px-5 py-3.5 border-b dark:border-gray-800 bg-gray-900 text-white">
@@ -312,8 +341,9 @@
         <button onclick="verifyAdmin()" class="w-full py-2.5 rounded-lg bg-emerald-800 text-white font-bold text-sm">Unlock Admin Panel</button>
       </div>
       <div id="adminControlView" class="hidden p-5 space-y-4 max-h-[82vh] overflow-y-auto">
-        <div class="flex justify-between items-center bg-amber-500/10 p-3 rounded-xl border border-amber-500/30 text-xs">
-          <span>👑 Admin Notice: Yahan aap sabhi dukandaron ke Email, Password, Mobile, aur Custom Expiry Calendar set kar sakte hain.</span>
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-amber-500/10 p-3 rounded-xl border border-amber-500/30 text-xs">
+          <span>👑 Admin Control: Search stores by name/email and customize product upload limits or expiry calendar.</span>
+          <input id="adminSearchStoreInput" oninput="renderAdminStoresList()" type="text" placeholder="Search by Store Name or Email..." class="px-3 py-1.5 rounded-lg border border-amber-500/40 bg-white dark:bg-slate-800 text-xs w-full sm:w-64" />
         </div>
         <div id="adminStoresList" class="space-y-3"></div>
       </div>
@@ -346,23 +376,47 @@
 
       await loadDatabase();
 
+      const savedSession = localStorage.getItem("shopkart_logged_seller");
+      if (savedSession) {
+        try {
+          const sellerObj = JSON.parse(savedSession);
+          const found = stores.find(s => s.id === sellerObj.id);
+          if (found) loggedInSeller = found;
+        } catch(e) {}
+      }
+
       const params = new URLSearchParams(window.location.search);
       const requestedSlug = params.get("store");
 
       if (requestedSlug) {
         const found = stores.find(s => s.store_slug === requestedSlug);
-        currentStore = found || stores[0];
+        currentStore = found || null;
         if (found) {
           document.getElementById("storeDirectoryBar").classList.add("hidden");
-          document.getElementById("dukandarNavBtn").classList.add("hidden");
-          document.getElementById("adminNavBtn").classList.add("hidden"); // Hide Admin Icon for customers
+          if (!loggedInSeller || loggedInSeller.id !== found.id) {
+            document.getElementById("adminNavBtn").classList.add("hidden");
+          }
         }
       } else {
-        currentStore = stores[0];
+        if (loggedInSeller) {
+          currentStore = loggedInSeller;
+        } else {
+          currentStore = null;
+        }
       }
 
+      updateNavbarAuthButton();
       populateStoreSelector();
       renderStorefront();
+    }
+
+    function updateNavbarAuthButton() {
+      const btnText = document.getElementById("sellerBtnText");
+      if (loggedInSeller) {
+        btnText.innerText = "My Store Panel";
+      } else {
+        btnText.innerText = "Store Login";
+      }
     }
 
     async function loadDatabase() {
@@ -383,14 +437,13 @@
     }
 
     function switchStore(slug) {
-      currentStore = stores.find(s => s.store_slug === slug) || stores[0];
+      currentStore = stores.find(s => s.store_slug === slug) || null;
       activeCategory = "All";
       cart = [];
       updateCartUI();
       renderStorefront();
     }
 
-    // AUTOMATIC SUSPEND CHECK AFTER 7 DAYS TRIAL OR CUSTOM EXPIRY
     function isStoreValid(store) {
       if (!store) return false;
       if (store.status === "SUSPENDED" || store.is_active === false) return false;
@@ -399,21 +452,36 @@
     }
 
     function renderStorefront() {
-      if (!currentStore) return;
+      const bannerEl = document.getElementById("storeHeroBanner");
+      const grid = document.getElementById("productGrid");
+
+      if (!currentStore) {
+        bannerEl.classList.add("hidden");
+        document.getElementById("navStoreBadge").innerText = "";
+        document.getElementById("productCountLabel").innerText = "0";
+        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">
+          <div class="text-4xl mb-2">🏪</div>
+          <h3 class="font-bold text-base text-white">Shopkart Fashion Marketplace</h3>
+          <p class="text-xs mt-1">Kripya upar <b>Store Login</b> par click karke apne account se login karein, ya apna store link kholein.</p>
+        </div>`;
+        return;
+      }
+
       document.getElementById("navStoreBadge").innerText = currentStore.store_name;
 
       if (!isStoreValid(currentStore)) {
+        bannerEl.classList.add("hidden");
         document.getElementById("storefrontMain").classList.add("hidden");
         document.getElementById("expiredScreen").classList.remove("hidden");
         return;
       } else {
-        document.getElementById("storefrontMain").classList.remove("hidden");
         document.getElementById("expiredScreen").classList.add("hidden");
+        bannerEl.classList.remove("hidden");
       }
 
       document.getElementById("heroStoreName").innerText = `${currentStore.store_name} • Assured Fashion`;
       document.getElementById("heroBannerTitle").innerText = currentStore.banner_title || "FESTIVE COLLECTION UP TO 50% OFF";
-      document.getElementById("heroWhatsappDisplay").innerText = `+${currentStore.whatsapp_number}`;
+      document.getElementById("heroWhatsappDisplay").innerText = `+${currentStore.whatsapp_number || 'Not Set'}`;
       document.getElementById("storeAddressDisplay").innerText = currentStore.address ? `📍 ${currentStore.address}` : "";
 
       const cats = ["All", ...(currentStore.categories || ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"])];
@@ -430,6 +498,7 @@
     function selectCategory(cat) { activeCategory = cat; renderStorefront(); }
 
     function renderCustomerProducts() {
+      if (!currentStore) return;
       const query = (document.getElementById("searchInput").value || "").toLowerCase().trim();
       const storeProducts = products.filter(p => {
         const belongs = String(p.store_id) === String(currentStore.id) && p.in_stock !== false;
@@ -480,7 +549,6 @@
       }).join("");
     }
 
-    // FLIPKART-STYLE ZOOM & SIZES MODAL
     function openProductDetailModal(productId) {
       const p = products.find(x => String(x.id) === String(productId));
       if (!p || !currentStore) return;
@@ -590,8 +658,20 @@
     // SELLER PANEL
     function openSellerModal() {
       document.getElementById("sellerModal").classList.remove("hidden");
-      if (loggedInSeller) showSellerDashboard();
-      else { document.getElementById("sellerAuthView").classList.remove("hidden"); document.getElementById("sellerDashboardView").classList.add("hidden"); }
+      if (loggedInSeller) {
+        showSellerDashboard();
+      } else {
+        const savedSession = localStorage.getItem("shopkart_logged_seller");
+        if (savedSession) {
+          try {
+            loggedInSeller = JSON.parse(savedSession);
+            showSellerDashboard();
+            return;
+          } catch(e) {}
+        }
+        document.getElementById("sellerAuthView").classList.remove("hidden");
+        document.getElementById("sellerDashboardView").classList.add("hidden");
+      }
     }
     function closeSellerModal() { document.getElementById("sellerModal").classList.add("hidden"); }
 
@@ -600,7 +680,10 @@
       const pass = document.getElementById("loginPass").value.trim();
       const found = stores.find(s => s.owner_email.toLowerCase() === email && s.password === pass);
       if (!found) return alert("Invalid Gmail or Password!");
-      loggedInSeller = found; document.getElementById("sellerBtnText").innerText = "My Store Panel"; showSellerDashboard();
+      
+      loggedInSeller = found;
+      localStorage.setItem("shopkart_logged_seller", JSON.stringify(found));
+      window.location.href = `${window.location.pathname}?store=${found.store_slug}`;
     }
 
     async function sellerRegister() {
@@ -611,18 +694,19 @@
 
       if (!name || !wa || !email || !pass) return alert("⚠️ All 4 options (Shop Name, WhatsApp, Email, Password) are mandatory!");
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + Math.floor(100 + Math.random() * 900);
-      const exp = new Date(); exp.setDate(exp.getDate() + 7); // 7 Days Free Trial
+      const exp = new Date(); exp.setDate(exp.getDate() + 7);
 
       const newStore = {
         store_name: name, owner_email: email, password: pass, owner_phone: wa, store_slug: slug, whatsapp_number: wa,
         banner_title: "FESTIVE COLLECTION UP TO 50% OFF", address: "", categories: ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"],
-        is_active: true, status: "ACTIVE", product_limit: 150, expires_at: exp.toISOString()
+        is_active: true, status: "ACTIVE", product_limit: 100, expires_at: exp.toISOString() // Default Limit: 100 Items
       };
 
       const { data, error } = await client.from("shopkart_stores").insert([newStore]).select().single();
       if (error) return alert("Error: " + error.message);
-      stores.unshift(data); loggedInSeller = data; currentStore = loggedInSeller;
-      populateStoreSelector(); renderStorefront(); showSellerDashboard();
+      
+      localStorage.setItem("shopkart_logged_seller", JSON.stringify(data));
+      window.location.href = `${window.location.pathname}?store=${data.store_slug}`;
     }
 
     function showSellerDashboard() {
@@ -631,9 +715,12 @@
       const link = `${window.location.origin}${window.location.pathname}?store=${loggedInSeller.store_slug}`;
       document.getElementById("sellerShareLink").innerText = link;
       
+      const myCount = products.filter(p => String(p.store_id) === String(loggedInSeller.id)).length;
+      const limit = loggedInSeller.product_limit || 100;
       const expDate = new Date(loggedInSeller.expires_at || loggedInSeller.subscription_expiry);
       const daysLeft = Math.ceil((expDate - new Date()) / 86400000);
-      document.getElementById("sellerSubInfo").innerText = `Subscription Status: ${daysLeft > 0 ? daysLeft + ' Days Remaining (Active)' : 'EXPIRED / SUSPENDED'} (Expires: ${expDate.toLocaleString()})`;
+      
+      document.getElementById("sellerSubInfo").innerText = `📦 Products Uploaded: ${myCount} / ${limit} Max Limit • Subscription: ${daysLeft > 0 ? daysLeft + ' Days Remaining' : 'EXPIRED'}`;
 
       document.getElementById("setStoreName").value = loggedInSeller.store_name;
       document.getElementById("setWhatsapp").value = loggedInSeller.whatsapp_number;
@@ -682,7 +769,7 @@
       
       await client.from("shopkart_stores").update({ store_name: updatedName, whatsapp_number: updatedWa, banner_title: updatedBanner, address: updatedAddr }).eq("id", loggedInSeller.id);
       currentStore = loggedInSeller; populateStoreSelector(); renderStorefront(); showSellerDashboard();
-      alert("✅ Settings saved!");
+      alert("✅ WhatsApp number & settings saved successfully!");
     }
 
     function compressFashionImage(file) {
@@ -703,7 +790,14 @@
       });
     }
 
+    // 100 ITEMS LIMIT CHECK DURING UPLOAD
     async function addFashionProduct() {
+      const myCount = products.filter(p => String(p.store_id) === String(loggedInSeller.id)).length;
+      const maxLimit = loggedInSeller.product_limit || 100;
+      if (myCount >= maxLimit) {
+        return alert(`⚠️ Aapki product upload limit (${maxLimit} items) puri ho chuki hai! Limit badhwane ke liye Admin se sampark karein.`);
+      }
+
       const name = document.getElementById("prodName").value.trim();
       const category = document.getElementById("prodCategory").value;
       const sizes = document.getElementById("prodSizes").value.split(",").map(s => s.trim()).filter(Boolean);
@@ -729,11 +823,11 @@
       const { data } = await client.from("shopkart_products").insert([newProd]).select().single();
       if (data) products.unshift(data);
       document.getElementById("prodName").value = ""; document.getElementById("prodPrice").value = ""; document.getElementById("prodMrp").value = ""; fileInput.value = "";
-      renderSellerProducts(); renderStorefront(); alert("✅ Product uploaded successfully!");
+      showSellerDashboard(); renderStorefront(); alert("✅ Product uploaded successfully!");
     }
 
-    // INVENTORY & PRODUCT SEARCH
     function renderSellerProducts() {
+      if (!loggedInSeller) return;
       const searchQ = (document.getElementById("sellerSearchInventory")?.value || "").toLowerCase().trim();
       const myProds = products.filter(p => String(p.store_id) === String(loggedInSeller.id) && (!searchQ || p.name.toLowerCase().includes(searchQ) || p.category.toLowerCase().includes(searchQ)));
       
@@ -746,9 +840,45 @@
               <div class="text-[11px] text-gray-500">₹${p.selling_price} • Sizes: ${(p.sizes||[]).join(", ")}</div>
             </div>
           </div>
-          <button onclick="deleteProduct('${p.id}')" class="px-2.5 py-1 rounded bg-red-500/10 text-red-600 text-xs font-bold">Delete</button>
+          <div class="flex gap-1.5">
+            <button onclick="openEditModal('${p.id}')" class="px-2.5 py-1 rounded bg-indigo-500/10 text-indigo-400 text-xs font-bold hover:bg-indigo-500 hover:text-white">Edit</button>
+            <button onclick="deleteProduct('${p.id}')" class="px-2.5 py-1 rounded bg-red-500/10 text-red-600 text-xs font-bold hover:bg-red-500 hover:text-white">Delete</button>
+          </div>
         </div>
       `).join("");
+    }
+
+    function openEditModal(prodId) {
+      const p = products.find(x => String(x.id) === String(prodId));
+      if (!p) return;
+      document.getElementById("editProdId").value = p.id;
+      document.getElementById("editProdName").value = p.name;
+      document.getElementById("editProdPrice").value = p.selling_price;
+      document.getElementById("editProdMrp").value = p.mrp;
+      document.getElementById("editProdSizes").value = (p.sizes || []).join(", ");
+      document.getElementById("editProductModal").classList.remove("hidden");
+    }
+
+    function closeEditModal() {
+      document.getElementById("editProductModal").classList.add("hidden");
+    }
+
+    async function saveEditedProduct() {
+      const id = document.getElementById("editProdId").value;
+      const name = document.getElementById("editProdName").value.trim();
+      const price = Number(document.getElementById("editProdPrice").value);
+      const mrp = Number(document.getElementById("editProdMrp").value);
+      const sizes = document.getElementById("editProdSizes").value.split(",").map(s => s.trim()).filter(Boolean);
+
+      if (!name || !price || !mrp) return alert("Saari fields bharein!");
+
+      const target = products.find(x => String(x.id) === String(id));
+      if (target) {
+        target.name = name; target.selling_price = price; target.mrp = mrp; target.sizes = sizes.length ? sizes : ["Free Size"];
+      }
+
+      await client.from("shopkart_products").update({ name, selling_price: price, mrp, sizes: target.sizes }).eq("id", id);
+      closeEditModal(); renderSellerProducts(); renderStorefront(); alert("✅ Product updated successfully!");
     }
 
     async function deleteProduct(prodId) {
@@ -757,12 +887,16 @@
       if (target?.image_path) await client.storage.from("shopkart-images").remove([target.image_path]);
       await client.from("shopkart_products").delete().eq("id", prodId);
       products = products.filter(p => String(p.id) !== String(prodId));
-      renderSellerProducts(); renderStorefront();
+      showSellerDashboard(); renderStorefront();
     }
 
-    function sellerLogout() { loggedInSeller = null; document.getElementById("sellerBtnText").innerText = "Dukandar Login"; closeSellerModal(); }
+    function sellerLogout() {
+      loggedInSeller = null;
+      localStorage.removeItem("shopkart_logged_seller");
+      window.location.href = window.location.pathname;
+    }
 
-    // SUPER ADMIN PANEL (FULL DETAILS & CUSTOM CALENDAR EXPIRY)
+    // SUPER ADMIN PANEL (WITH STORE SEARCH & PRODUCT LIMIT CUSTOMIZER)
     function openAdminModal() { document.getElementById("adminModal").classList.remove("hidden"); }
     function closeAdminModal() { document.getElementById("adminModal").classList.add("hidden"); }
     
@@ -774,9 +908,15 @@
     }
 
     function renderAdminStoresList() {
-      document.getElementById("adminStoresList").innerHTML = stores.map(s => {
+      const searchVal = (document.getElementById("adminSearchStoreInput")?.value || "").toLowerCase().trim();
+      const filteredStores = stores.filter(s => 
+        s.store_name.toLowerCase().includes(searchVal) || s.owner_email.toLowerCase().includes(searchVal)
+      );
+
+      document.getElementById("adminStoresList").innerHTML = filteredStores.map(s => {
         const expIso = (s.expires_at || s.subscription_expiry || new Date().toISOString()).slice(0, 16);
         const isActive = s.status !== "SUSPENDED" && s.is_active !== false;
+        const currentLimit = s.product_limit || 100;
         return `
         <div class="p-4 rounded-xl border dark:border-gray-800 bg-slate-900 space-y-3">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -798,14 +938,17 @@
             </div>
           </div>
           
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-slate-800 text-xs">
+          <div class="grid sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800 text-xs">
             <div class="flex items-center gap-2">
-              <span class="font-semibold text-gray-300">📅 Custom Subscription Expiry (Calendar & Time):</span>
-              <input type="datetime-local" id="expiryInput_${s.id}" value="${expIso}" class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-xs text-white" />
+              <span class="font-semibold text-gray-300">📦 Max Items Limit:</span>
+              <input type="number" id="limitInput_${s.id}" value="${currentLimit}" class="w-24 px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-xs text-white font-bold" />
+              <button onclick="adminSaveLimit('${s.id}')" class="px-3 py-1 rounded bg-emerald-700 text-white font-bold">Save Limit</button>
             </div>
-            <button onclick="adminSaveExpiry('${s.id}')" class="px-4 py-1.5 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold">
-              💾 Save Expiry
-            </button>
+            <div class="flex items-center justify-end gap-2">
+              <span class="font-semibold text-gray-300">📅 Expiry:</span>
+              <input type="datetime-local" id="expiryInput_${s.id}" value="${expIso}" class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-xs text-white" />
+              <button onclick="adminSavepiry('${s.id}')" class="px-3 py-1 rounded bg-indigo-600 text-white font-bold">Save Expiry</button>
+            </div>
           </div>
         </div>`;
       }).join("");
@@ -818,22 +961,28 @@
       s.status = newStatus; s.is_active = (newStatus === "ACTIVE");
 
       await client.from("shopkart_stores").update({ status: newStatus, is_active: (newStatus === "ACTIVE") }).eq("id", storeId);
-      renderAdminStoresList();
-      renderStorefront();
-      alert(`✅ Store status updated to ${newStatus}`);
+      renderAdminStoresList(); renderStorefront(); alert(`✅ Store status updated to ${newStatus}`);
     }
 
-    async function adminSaveExpiry(storeId) {
+    async function adminSaveLimit(storeId) {
+      const newLimit = Number(document.getElementById(`limitInput_${storeId}`).value);
+      if (!newLimit || newLimit < 1) return alert("Sahi limit number daalein!");
+      const s = stores.find(x => String(x.id) === String(storeId));
+      if (s) s.product_limit = newLimit;
+
+      await client.from("shopkart_stores").update({ product_limit: newLimit }).eq("id", storeId);
+      renderAdminStoresList(); alert(`✅ Product upload limit successfully updated to ${newLimit} items!`);
+    }
+
+    async function adminSavepiry(storeId) {
       const val = document.getElementById(`expiryInput_${storeId}`).value;
       if (!val) return alert("Sahi date aur time select karein!");
       const newExpIso = new Date(val).toISOString();
-
       const s = stores.find(x => String(x.id) === String(storeId));
       if (s) { s.expires_at = newExpIso; s.subscription_expiry = newExpIso; }
 
       await client.from("shopkart_stores").update({ expires_at: newExpIso, subscription_expiry: newExpIso }).eq("id", storeId);
-      renderAdminStoresList();
-      alert("✅ Custom subscription time successfully updated!");
+      renderAdminStoresList(); alert("✅ Custom subscription expiry updated!");
     }
 
     function toggleTheme() {
