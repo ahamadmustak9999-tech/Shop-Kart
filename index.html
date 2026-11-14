@@ -35,41 +35,39 @@
 
   <!-- TOP NAVBAR -->
   <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#111827]/95 backdrop-blur border-b border-gray-200 dark:border-gray-800">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3">
-      <div class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
-          <span class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Shopkart</span>
-          <span id="navStoreBadge" class="hidden sm:inline-block text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-900/10 text-emerald-800 dark:bg-amber-500/20 dark:text-amber-300 border border-emerald-800/20 dark:border-amber-400/30"></span>
+    <div class="max-w-7xl mx-auto px-2.5 sm:px-6 py-2.5">
+      <div class="flex items-center justify-between gap-1.5">
+        <div class="flex items-center gap-1.5 cursor-pointer min-w-0" onclick="goHome()">
+          <span class="font-serif text-xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white shrink-0">Shopkart</span>
+          <span id="navStoreBadge" class="inline-block text-[11px] sm:text-xs font-bold px-2 py-1 rounded-full bg-emerald-900/10 text-emerald-800 dark:bg-amber-500/20 dark:text-amber-300 border border-emerald-800/20 dark:border-amber-400/30 whitespace-nowrap truncate max-w-[120px] sm:max-w-none"></span>
         </div>
 
-        <div class="flex items-center gap-2 sm:gap-3">
-          <button onclick="toggleTheme()" class="p-2 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Toggle Dark/Light Mode">
-            <span id="themeIcon" class="text-base">🌙</span>
+        <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <button onclick="toggleTheme()" class="p-1.5 sm:p-2 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Toggle Dark/Light Mode">
+            <span id="themeIcon" class="text-sm sm:text-base">🌙</span>
           </button>
 
-          <button onclick="openCartModal()" class="relative p-2 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+          <button onclick="openCartModal()" class="relative p-1.5 sm:p-2 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
             🛒
-            <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-emerald-700 dark:bg-amber-500 text-white dark:text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-emerald-700 dark:bg-amber-500 text-white dark:text-black text-[10px] font-bold w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center">0</span>
           </button>
 
-          <!-- Store Login / My Store Panel Button (Strictly Hidden for Customer Store Links) -->
-          <button id="dukandarNavBtn" onclick="openSellerModal()" class="text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg bg-gray-900 text-white dark:bg-amber-500 dark:text-gray-950 hover:opacity-90 transition">
+          <button id="dukandarNavBtn" onclick="openSellerModal()" class="text-[11px] sm:text-sm font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-gray-900 text-white dark:bg-amber-500 dark:text-gray-950 hover:opacity-90 transition whitespace-nowrap">
             <span id="sellerBtnText">Store Login</span>
           </button>
 
-          <!-- Super Admin Icon (Strictly Hidden for Customers) -->
-          <button id="adminNavBtn" onclick="openAdminModal()" class="p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white transition" title="Super Admin">
+          <button id="adminNavBtn" onclick="openAdminModal()" class="p-1.5 sm:p-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white transition" title="Super Admin">
             ⚙️
           </button>
         </div>
       </div>
 
-      <div class="mt-2.5 flex items-center bg-gray-100 dark:bg-gray-800/90 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-        <input id="searchInput" oninput="renderCustomerProducts()" type="text" placeholder="Search for kurtis, jeans, shirts, footwear..." class="w-full px-3.5 py-2 bg-transparent text-sm focus:outline-none" />
-        <button class="px-4 py-2 bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-semibold text-sm">🔍</button>
+      <div class="mt-2 flex items-center bg-gray-100 dark:bg-gray-800/90 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <input id="searchInput" oninput="renderCustomerProducts()" type="text" placeholder="Search kurtis, jeans, shirts..." class="w-full px-3 py-1.5 sm:py-2 bg-transparent text-xs sm:text-sm focus:outline-none" />
+        <button class="px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-semibold text-xs sm:text-sm">🔍</button>
       </div>
 
-      <div id="categoryBar" class="mt-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+      <div id="categoryBar" class="mt-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
     </div>
   </header>
 
@@ -84,13 +82,15 @@
   <main id="storefrontMain" class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4">
     <!-- Banner -->
     <div id="storeHeroBanner" class="relative rounded-2xl overflow-hidden mb-6 bg-gradient-to-r from-[#2c221e] via-[#43362e] to-[#2c221e] text-white shadow-md hidden">
-      <div class="px-6 py-8 sm:py-12 md:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="px-5 py-6 sm:py-12 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <span id="heroStoreName" class="inline-block text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded bg-amber-400 text-gray-950 mb-2">SHOPKART VERIFIED PARTNER</span>
-          <h1 id="heroBannerTitle" class="text-xl sm:text-3xl font-extrabold tracking-tight">FESTIVE COLLECTION UP TO 50% OFF</h1>
+          <span id="heroStoreName" class="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-amber-400 text-gray-950 mb-2">SHOPKART VERIFIED PARTNER</span>
+          <h1 id="heroBannerTitle" class="text-lg sm:text-3xl font-extrabold tracking-tight">FESTIVE COLLECTION UP TO 50% OFF</h1>
           <p id="heroBannerSubtitle" class="text-xs sm:text-sm text-gray-200 mt-1">Select your size & order directly on Seller's WhatsApp</p>
+          <!-- Store Address Display on Banner -->
+          <div id="storeAddressDisplay" class="text-xs text-amber-300 font-semibold mt-2"></div>
         </div>
-        <div class="text-xs bg-black/40 backdrop-blur px-3.5 py-2 rounded-xl border border-white/15">
+        <div class="text-xs bg-black/40 backdrop-blur px-3 py-2 rounded-xl border border-white/15">
           <div>💬 WhatsApp Order Desk:</div>
           <div id="heroWhatsappDisplay" class="font-bold text-amber-300 text-sm mt-0.5">Not Set</div>
         </div>
@@ -98,8 +98,8 @@
     </div>
 
     <div class="flex items-center justify-between mb-3">
-      <h2 class="text-base sm:text-lg font-bold">Fashion Catalogue (<span id="productCountLabel">0</span> Items)</h2>
-      <span class="text-xs text-gray-500 dark:text-gray-400">Tap product to view available sizes</span>
+      <h2 class="text-sm sm:text-lg font-bold">Fashion Catalogue (<span id="productCountLabel">0</span> Items)</h2>
+      <span class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400">Tap product to view available sizes</span>
     </div>
 
     <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5"></div>
@@ -225,6 +225,18 @@
           <button onclick="saveStoreSettings()" class="mt-3 px-5 py-2 rounded-lg bg-emerald-800 dark:bg-amber-500 text-white dark:text-gray-950 font-bold text-xs">💾 Save Settings</button>
         </div>
 
+        <!-- CHANGE PASSWORD SECTION -->
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+          <h4 class="font-bold text-sm sm:text-base text-amber-500">🔑 Change Store Password</h4>
+          <div class="grid sm:grid-cols-2 gap-3 text-xs">
+            <input id="currentPassInput" type="password" placeholder="Current Password *" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+            <input id="newPassInput" type="password" placeholder="New Password *" class="px-3 py-2 rounded-lg border dark:border-gray-700 bg-transparent text-xs" />
+          </div>
+          <button onclick="changeSellerPassword()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-bold text-xs">
+            Update Password
+          </button>
+        </div>
+
         <!-- SECTION 2 -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
           <h4 class="font-bold text-sm sm:text-base text-indigo-400">🏷️ Section 2: Custom Fashion Categories Manager</h4>
@@ -252,7 +264,7 @@
         <!-- SECTION 4 -->
         <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-            <h4 class="font-bold text-sm">📦 Section 4: My Inventory & Products (Strictly Private)</h4>
+            <h4 class="font-bold text-sm">📦 Section 4: My Inventory & Products (Search & Edit)</h4>
             <input id="sellerSearchInventory" oninput="renderSellerProducts()" type="text" placeholder="Search my product..." class="px-3 py-1.5 rounded-lg border dark:border-gray-700 bg-transparent text-xs w-full sm:w-64" />
           </div>
           <div id="sellerProductList" class="grid sm:grid-cols-2 gap-2.5"></div>
@@ -384,13 +396,11 @@
       const adminBtn = document.getElementById("adminNavBtn");
 
       if (requestedSlug) {
-        // Customer visiting via store link: Hide Store Login and Admin Icon completely
         const found = stores.find(s => s.store_slug && s.store_slug.toLowerCase() === requestedSlug.toLowerCase());
         currentStore = found || null;
         if (dukandarBtn) dukandarBtn.classList.add("hidden");
         if (adminBtn) adminBtn.classList.add("hidden");
       } else {
-        // Normal visitor or logged-in seller viewing home
         if (loggedInSeller) {
           currentStore = loggedInSeller;
           if (dukandarBtn) dukandarBtn.classList.remove("hidden");
@@ -478,15 +488,19 @@
       if (heroBannerTitle) heroBannerTitle.innerText = currentStore.banner_title || "FESTIVE COLLECTION UP TO 50% OFF";
       const heroWhatsappDisplay = document.getElementById("heroWhatsappDisplay");
       if (heroWhatsappDisplay) heroWhatsappDisplay.innerText = `+${currentStore.whatsapp_number || 'Not Set'}`;
+      
+      // FIX: Render Store Address on Banner correctly when saved
       const storeAddressDisplay = document.getElementById("storeAddressDisplay");
-      if (storeAddressDisplay) storeAddressDisplay.innerText = currentStore.address ? `📍 ${currentStore.address}` : "";
+      if (storeAddressDisplay) {
+        storeAddressDisplay.innerText = currentStore.address ? `📍 ${currentStore.address}` : "";
+      }
 
       const cats = ["All", ...(currentStore.categories || ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"])];
       const categoryBar = document.getElementById("categoryBar");
       if (categoryBar) {
         categoryBar.innerHTML = cats.map(c => {
           const active = c === activeCategory;
-          return `<button onclick="selectCategory('${c.replace(/'/g, "\\'")}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+          return `<button onclick="selectCategory('${c.replace(/'/g, "\\'")}')" class="px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
             active ? 'bg-emerald-800 text-white dark:bg-amber-500 dark:text-gray-950 shadow-sm' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
           }">${c}</button>`;
         }).join("");
@@ -792,6 +806,35 @@
       await client.from("shopkart_stores").update({ store_name: updatedName, whatsapp_number: updatedWa, banner_title: updatedBanner, address: updatedAddr }).eq("id", loggedInSeller.id);
       currentStore = loggedInSeller; renderStorefront(); showSellerDashboard();
       alert("✅ WhatsApp number & settings saved successfully!");
+    }
+
+    async function changeSellerPassword() {
+      if (!loggedInSeller) return;
+      const currentPass = document.getElementById("currentPassInput").value.trim();
+      const newPass = document.getElementById("newPassInput").value.trim();
+
+      if (!currentPass || !newPass) {
+        return alert("Kripya current password aur new password dono bharein!");
+      }
+
+      if (currentPass !== loggedInSeller.password) {
+        return alert("Aapka current password galat hai!");
+      }
+
+      if (newPass.length < 4) {
+        return alert("Naya password kam se kam 4 characters ka hona chahiye!");
+      }
+
+      loggedInSeller.password = newPass;
+      localStorage.setItem("shopkart_logged_seller", JSON.stringify(loggedInSeller));
+
+      try {
+        await client.from("shopkart_stores").update({ password: newPass }).eq("id", loggedInSeller.id);
+      } catch (e) {}
+
+      document.getElementById("currentPassInput").value = "";
+      document.getElementById("newPassInput").value = "";
+      alert("✅ Password successfully updated!");
     }
 
     function compressFashionImage(file) {
