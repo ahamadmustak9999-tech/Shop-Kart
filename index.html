@@ -80,20 +80,74 @@
 
   <!-- MAIN CUSTOMER STOREFRONT -->
   <main id="storefrontMain" class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4">
-    <!-- Banner -->
-    <div id="storeHeroBanner" class="relative rounded-2xl overflow-hidden mb-6 bg-gradient-to-r from-[#2c221e] via-[#43362e] to-[#2c221e] text-white shadow-md hidden">
-      <div class="px-5 py-6 sm:py-12 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <span id="heroStoreName" class="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-amber-400 text-gray-950 mb-2">SHOPKART VERIFIED PARTNER</span>
-          <h1 id="heroBannerTitle" class="text-lg sm:text-3xl font-extrabold tracking-tight">FESTIVE COLLECTION UP TO 50% OFF</h1>
-          <p id="heroBannerSubtitle" class="text-xs sm:text-sm text-gray-200 mt-1">Select your size & order directly on Seller's WhatsApp</p>
-          <!-- Store Address Display on Banner -->
-          <div id="storeAddressDisplay" class="text-xs text-amber-300 font-semibold mt-2"></div>
+    <!-- FLIPKART-STYLE LIVE CAROUSEL BANNER WITH TOUCH/SWIPE -->
+    <div id="storeHeroBanner" class="relative rounded-2xl overflow-hidden mb-6 shadow-md hidden select-none">
+      <div id="carouselTrack" class="flex transition-transform duration-500 ease-out cursor-grab active:cursor-grabbing">
+        
+        <!-- Slide 1: Festive Collection -->
+        <div class="min-w-full bg-gradient-to-r from-[#2c221e] via-[#43362e] to-[#2c221e] text-white p-5 sm:py-10 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <span class="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-amber-400 text-gray-950 mb-2">SHOPKART VERIFIED PARTNER</span>
+            <h1 class="text-lg sm:text-3xl font-extrabold tracking-tight" id="heroBannerTitle1">FESTIVE COLLECTION UP TO 50% OFF</h1>
+            <p class="text-xs sm:text-sm text-gray-200 mt-1">Select your size & order directly on Seller's WhatsApp</p>
+            <div class="storeAddressDisplay text-xs text-amber-300 font-semibold mt-2"></div>
+          </div>
+          <div class="text-xs bg-black/40 backdrop-blur px-3 py-2 rounded-xl border border-white/15 shrink-0">
+            <div>💬 WhatsApp Order Desk:</div>
+            <div class="heroWhatsappDisplay font-bold text-amber-300 text-sm mt-0.5">Not Set</div>
+          </div>
         </div>
-        <div class="text-xs bg-black/40 backdrop-blur px-3 py-2 rounded-xl border border-white/15">
-          <div>💬 WhatsApp Order Desk:</div>
-          <div id="heroWhatsappDisplay" class="font-bold text-amber-300 text-sm mt-0.5">Not Set</div>
+
+        <!-- Slide 2: Flat 40% OFF -->
+        <div class="min-w-full bg-gradient-to-r from-[#1b2a4a] via-[#243b63] to-[#1b2a4a] text-white p-5 sm:py-10 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <span class="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-emerald-400 text-gray-950 mb-2">SPECIAL DISCOUNT DEAL</span>
+            <h1 class="text-lg sm:text-3xl font-extrabold tracking-tight">FLAT 40% OFF ON ALL ETHNIC WEAR</h1>
+            <p class="text-xs sm:text-sm text-gray-200 mt-1">Grab trendy kurtis, sarees, and festive apparel now</p>
+            <div class="storeAddressDisplay text-xs text-amber-300 font-semibold mt-2"></div>
+          </div>
+          <div class="text-xs bg-black/40 backdrop-blur px-3 py-2 rounded-xl border border-white/15 shrink-0">
+            <div>💬 WhatsApp Order Desk:</div>
+            <div class="heroWhatsappDisplay font-bold text-amber-300 text-sm mt-0.5">Not Set</div>
+          </div>
         </div>
+
+        <!-- Slide 3: Brand New Launch -->
+        <div class="min-w-full bg-gradient-to-r from-[#3d1a38] via-[#5c2a54] to-[#3d1a38] text-white p-5 sm:py-10 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <span class="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-rose-400 text-gray-950 mb-2">NEW LAUNCH ARRIVALS</span>
+            <h1 class="text-lg sm:text-3xl font-extrabold tracking-tight">FRESH FASHION DROP OF THE SEASON</h1>
+            <p class="text-xs sm:text-sm text-gray-200 mt-1">Be the first to wear the trendiest street styles</p>
+            <div class="storeAddressDisplay text-xs text-amber-300 font-semibold mt-2"></div>
+          </div>
+          <div class="text-xs bg-black/40 backdrop-blur px-3 py-2 rounded-xl border border-white/15 shrink-0">
+            <div>💬 WhatsApp Order Desk:</div>
+            <div class="heroWhatsappDisplay font-bold text-amber-300 text-sm mt-0.5">Not Set</div>
+          </div>
+        </div>
+
+        <!-- Slide 4: New Styles & Trends -->
+        <div class="min-w-full bg-gradient-to-r from-[#17382d] via-[#235443] to-[#17382d] text-white p-5 sm:py-10 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <span class="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-cyan-400 text-gray-950 mb-2">TRENDING STYLES</span>
+            <h1 class="text-lg sm:text-3xl font-extrabold tracking-tight">PREMIUM WARDROBE COLLECTION</h1>
+            <p class="text-xs sm:text-sm text-gray-200 mt-1">Discover top-quality shirts, jeans, and casuals</p>
+            <div class="storeAddressDisplay text-xs text-amber-300 font-semibold mt-2"></div>
+          </div>
+          <div class="text-xs bg-black/40 backdrop-blur px-3 py-2 rounded-xl border border-white/15 shrink-0">
+            <div>💬 WhatsApp Order Desk:</div>
+            <div class="heroWhatsappDisplay font-bold text-amber-300 text-sm mt-0.5">Not Set</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Carousel Dots Indicator -->
+      <div class="absolute bottom-2.5 left-0 right-0 flex justify-center gap-1.5 z-10" id="carouselDots">
+        <button onclick="currentSlide(0)" class="w-6 h-1.5 rounded-full bg-white transition-all shadow"></button>
+        <button onclick="currentSlide(1)" class="w-2.5 h-1.5 rounded-full bg-white/50 transition-all shadow"></button>
+        <button onclick="currentSlide(2)" class="w-2.5 h-1.5 rounded-full bg-white/50 transition-all shadow"></button>
+        <button onclick="currentSlide(3)" class="w-2.5 h-1.5 rounded-full bg-white/50 transition-all shadow"></button>
       </div>
     </div>
 
@@ -369,6 +423,13 @@
     let loggedInSeller = null;
     let activeZoomProductId = null;
 
+    // Carousel State Variables
+    let currentSlideIndex = 0;
+    const totalSlides = 4;
+    let slideInterval = null;
+    let touchStartX = 0;
+    let touchEndX = 0;
+
     function escapeHtml(v) { return String(v ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     async function initApp() {
@@ -414,6 +475,7 @@
 
       updateNavbarAuthButton();
       renderStorefront();
+      initCarousel();
     }
 
     function updateNavbarAuthButton() {
@@ -482,18 +544,18 @@
         if (bannerEl) bannerEl.classList.remove("hidden");
       }
 
-      const heroStoreName = document.getElementById("heroStoreName");
-      if (heroStoreName) heroStoreName.innerText = `${currentStore.store_name} • Assured Fashion`;
-      const heroBannerTitle = document.getElementById("heroBannerTitle");
-      if (heroBannerTitle) heroBannerTitle.innerText = currentStore.banner_title || "FESTIVE COLLECTION UP TO 50% OFF";
-      const heroWhatsappDisplay = document.getElementById("heroWhatsappDisplay");
-      if (heroWhatsappDisplay) heroWhatsappDisplay.innerText = `+${currentStore.whatsapp_number || 'Not Set'}`;
+      const bannerTitle1 = document.getElementById("heroBannerTitle1");
+      if (bannerTitle1) bannerTitle1.innerText = currentStore.banner_title || "FESTIVE COLLECTION UP TO 50% OFF";
+
+      const waDisplays = document.querySelectorAll(".heroWhatsappDisplay");
+      waDisplays.forEach(el => {
+        el.innerText = `+${currentStore.whatsapp_number || 'Not Set'}`;
+      });
       
-      // FIX: Render Store Address on Banner correctly when saved
-      const storeAddressDisplay = document.getElementById("storeAddressDisplay");
-      if (storeAddressDisplay) {
-        storeAddressDisplay.innerText = currentStore.address ? `📍 ${currentStore.address}` : "";
-      }
+      const addrDisplays = document.querySelectorAll(".storeAddressDisplay");
+      addrDisplays.forEach(el => {
+        el.innerText = currentStore.address ? `📍 ${currentStore.address}` : "";
+      });
 
       const cats = ["All", ...(currentStore.categories || ["Men's Wear", "Ethnic Kurti", "Jeans", "Shirts", "Footwear"])];
       const categoryBar = document.getElementById("categoryBar");
@@ -507,6 +569,84 @@
       }
 
       renderCustomerProducts();
+    }
+
+    // CAROUSEL LOGIC & TOUCH / SWIPE
+    function initCarousel() {
+      const track = document.getElementById("carouselTrack");
+      if (!track) return;
+
+      startAutoSlide();
+
+      track.addEventListener("touchstart", (e) => {
+        touchStartX = e.touches[0].clientX;
+        stopAutoSlide();
+      }, {passive: true});
+
+      track.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        handleSwipeGesture();
+        startAutoSlide();
+      }, {passive: true});
+
+      track.addEventListener("mousedown", (e) => {
+        touchStartX = e.clientX;
+        stopAutoSlide();
+      });
+
+      track.addEventListener("mouseup", (e) => {
+        touchEndX = e.clientX;
+        handleSwipeGesture();
+        startAutoSlide();
+      });
+    }
+
+    function handleSwipeGesture() {
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          // Swiped Left -> Next Slide
+          currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+        } else {
+          // Swiped Right -> Prev Slide
+          currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+        }
+        updateCarouselPosition();
+      }
+    }
+
+    function updateCarouselPosition() {
+      const track = document.getElementById("carouselTrack");
+      if (!track) return;
+      track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+
+      const dots = document.querySelectorAll("#carouselDots button");
+      dots.forEach((dot, idx) => {
+        if (idx === currentSlideIndex) {
+          dot.className = "w-6 h-1.5 rounded-full bg-white transition-all shadow";
+        } else {
+          dot.className = "w-2.5 h-1.5 rounded-full bg-white/50 transition-all shadow";
+        }
+      });
+    }
+
+    function currentSlide(index) {
+      stopAutoSlide();
+      currentSlideIndex = index;
+      updateCarouselPosition();
+      startAutoSlide();
+    }
+
+    function startAutoSlide() {
+      stopAutoSlide();
+      slideInterval = setInterval(() => {
+        currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+        updateCarouselPosition();
+      }, 3500);
+    }
+
+    function stopAutoSlide() {
+      if (slideInterval) clearInterval(slideInterval);
     }
 
     function selectCategory(cat) { activeCategory = cat; renderStorefront(); }
